@@ -99,7 +99,7 @@ function game.load()
 		_game_over = save.gameover
 		_auto_move_speed = save.auto_move_speed
 		_develop = save.develop
-		_auto_run = save._auto_run
+		_auto_run = save.auto_run
 		_volume = save.volume	
 		_stage_mode = save.stage_mode
 	end
@@ -177,7 +177,7 @@ function game.update(dt)
 		end	
 	end
 
-	if _auto_run and _turn_finish then
+	if _develop and _auto_run and _turn_finish then
 		game.auto_move()
 	end
 end
@@ -231,8 +231,13 @@ local _key_routines = {
 	['escape'] = function ()
 		love.event.quit()
 	end,
-	['f4'] = function ()
+	['t'] = function ()
 		_stage_mode = not _stage_mode
+		if _stage_mode then
+			game.load_stage()
+		else
+			game.resart()
+		end
 	end,	
 	['left'] = function ()
 		game.load_prev_stage()
@@ -259,7 +264,7 @@ local _key_routines = {
 		end
 	end,
 	['d'] = function ()
-		_develop = not _develop
+		_develop = not _develop		
 	end,
 	['up'] = function ()
 		_auto_move_speed = _auto_move_speed * 2
@@ -274,13 +279,7 @@ local _key_routines = {
 	['s'] = function ()
 		_volume = _volume == 1 and 0 or 1		
 		love.audio.setVolume(_volume)
-	end,
-	['m'] = function ()
-		_board.random_all(20)
-	end,
-	['c'] = function ()
-		_board.clear()
-	end
+	end,	
 }
 
 function love.keypressed(key)
@@ -304,11 +303,16 @@ function game.render()
 
 	love.graphics.setColor(255, 255, 255, 255)
 	if _stage_mode then
-		font.print('big', string.format('[%d/%d] %s', 
-			stage_mgr.stage_id(), stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 10)
+		-- font.print('big', string.format('[%d/%d] %s', 
+		-- 	stage_mgr.stage_id(), stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 10)
 	else
 		font.print('hurge', string.format('%d', _score), 400, 10)
 		font.print('big', string.format('Best: %d', _highscore), 30, 10)
+	end
+
+	if _develop then
+		font.print('normal', string.format('auto[%s] stage_mode[%s] [%d/%d] %s', 
+			_auto_run, _stage_mode, stage_mgr.stage_id(), stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 580)
 	end
 
 	if _game_over then

@@ -194,15 +194,18 @@ function block_mgr.unselect()
 end
 
 function block_mgr.remove_select()
-	table.remove(_blocks, _selected_block.id)
-	_selected_block = nil
-	for i = 1, #_blocks do		
-		_blocks[i].id = i
+	for i, b in ipairs(_blocks) do
+		if b == _selected_block then
+			table.remove(_blocks, i)
+		end
 	end
+	
+	_selected_block = nil
 end
 
 function block_mgr.refill()	
-	for i = 1, #_blocks do		
+	for i = 1, #_blocks do
+		_blocks[i].id = i
 		block_mgr._reset(_blocks[i])
 	end
 

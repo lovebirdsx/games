@@ -93,6 +93,10 @@ function ai.get_best_move_depth(board, blocks, depth)
 			best_next_move = next_move
 			best_can_line_up = can_line_up
 		end
+
+		if socre == ai.get_max_score() then
+			break
+		end
 	end
 
 	best_move.next_move = best_next_move
