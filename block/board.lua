@@ -165,32 +165,19 @@ function board.create(s, x, y)
 				if h.test_point(x, y) then
 					return h
 				end
-			end		
+			end
 		end
 
 		return nil
 	end
 
 	function self.can_locate(b)
-		local hex_list = b.get_hex_list()
-		for _, h in ipairs(hex_list) do
-			local bh = self.get_hex_by_pos(h.x, h.y)
-			if not bh or not bh.can_locate() then
-				return false
-			end
+		local center_hex = self.get_hex_by_pos(b.x, b.y)
+		if not center_hex then
+			return false
+		else
+			return self.can_locate_by_rx_ry(b, center_hex.rx, center_hex.ry)
 		end
-		return true
-	end
-
-	function self.locate(b)
-		local hex_list = b.get_hex_list()
-		for _, h in ipairs(hex_list) do
-			local bh = self.get_hex_by_pos(h.x, h.y)
-			bh.id = h.id
-			bh.focus(false)
-		end
-
-		self._update_line_up()
 	end
 
 	function self.can_locate_by_rx_ry(b, rx, ry)

@@ -65,4 +65,6 @@ end
 -- test_serialize()
 -- test_read_write_file()
 -- printf('%02d', 1)
-test_print()
+-- test_print()
+
+print(unpack({1,2,3}))

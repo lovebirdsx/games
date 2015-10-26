@@ -1,16 +1,41 @@
 require('render')
 
+local SLOT = 0
+local COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6 = 1,2,3,4,5,6
+local ICING = 7
+
 local HEX_COLOR = {
-	[0] = {77, 77, 75},		-- no color
-	[1] = {255,220,137},	-- color 1
-	[2] = {255,137,181},	-- color 2
-	[3] = {245,162,11},		-- color 3
-	[4] = {137,140,255},	-- color 4
-	[5] = {113,224,150},	-- color 5
-	[6] = {207,243,129},	-- color 6	
+	[SLOT] = {77, 77, 75},
+	[COLOR1] = {255,220,137},
+	[COLOR2] = {255,137,181},
+	[COLOR3] = {245,162,11},
+	[COLOR4] = {137,140,255},
+	[COLOR5] = {113,224,150},
+	[COLOR6] = {207,243,129},
+	[ICING] = {255,255,255},
 }
 
-hexagon = {w = 59, h = 50, max_id = 6}
+local DRAW_FUN = {
+	[SLOT] = render.draw_hex_slot,
+	[COLOR1] = render.draw_hex_color,
+	[COLOR2] = render.draw_hex_color,
+	[COLOR3] = render.draw_hex_color,
+	[COLOR4] = render.draw_hex_color,
+	[COLOR5] = render.draw_hex_color,
+	[COLOR6] = render.draw_hex_color,
+	[ICING] = render.draw_icing,
+}
+
+hexagon = {w = 59, h = 50, max_id = 6,
+	type_slot = SLOT,
+	type_color1 = COLOR1,
+	type_color2 = COLOR2,
+	type_color3 = COLOR3,
+	type_color4 = COLOR4,
+	type_color5 = COLOR5,
+	type_color6 = COLOR6,
+	type_icing = ICING,
+}
 
 function hexagon.create(rx, ry, id, scale, x, y)
 	local self = {
@@ -25,17 +50,19 @@ function hexagon.create(rx, ry, id, scale, x, y)
 
 	function self.string()
 		return string.format('(%2d,%2d,%2d)', self.rx, self.ry, self.id)	
-	end	
+	end
 
 	function self.draw(shadow)
 		if shadow then
 			render.draw_hex_shadow(self.x, self.y, self.scale)
-		end		
+		end
+		
 		self.draw_c(HEX_COLOR[self.id], self.is_focus and 128 or 255)
 	end
 
-	function self.draw_c(c, alpha)
-		render.draw_hex(c, self.x, self.y, self.scale, alpha)
+	function self.draw_c(c, a)
+		love.graphics.setColor(c[1], c[2], c[3], a)
+		DRAW_FUN[self.id](self.x, self.y, self.scale)
 	end
 
 	function self.test_point(x, y, range)
