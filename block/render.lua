@@ -3,10 +3,12 @@ local BG_COLOR = {32, 32, 30}
 local _img_hex
 local _img_shadow
 local _img_icing
+local _img_bomb
 local _quad_hex_left
 local _quad_hex_right
 local _quad_shadow
 local _quad_icing
+local _quad_bomb
 
 render = {}
 
@@ -14,10 +16,12 @@ function render.init()
 	_img_hex = love.graphics.newImage('image/hex.png')
 	_img_shadow = love.graphics.newImage('image/shadow.png')
 	_img_icing = love.graphics.newImage('image/icing.png')
+	_img_bomb = love.graphics.newImage('image/bomb.png')
 	local sw, sh = _img_hex:getDimensions()
 	_quad_hex_left = love.graphics.newQuad(0, 0, sw / 2, sh, sw, sh)
 	_quad_hex_right = love.graphics.newQuad(sw / 2, 0, sw / 2, sh, sw, sh)
 	_quad_icing = love.graphics.newQuad(0, 0, sw / 2, sh, _img_icing:getDimensions())
+	_quad_bomb = love.graphics.newQuad(0, 0, sw / 2, sh, _img_bomb:getDimensions())
 	sw, sh = _img_shadow:getDimensions()
 	_quad_shadow = love.graphics.newQuad(0, 0, sw, sh, sw, sh)
 end
@@ -40,6 +44,10 @@ end
 
 function render.draw_icing(x, y, scale)
 	render._draw_hex(_img_icing, _quad_icing, x, y, scale)
+end
+
+function render.draw_bomb(x, y, scale)
+	render._draw_hex(_img_bomb, _quad_bomb, x, y, scale)
 end
 
 function render.draw_hex_shadow(x, y, scale)

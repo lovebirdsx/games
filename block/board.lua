@@ -1,4 +1,5 @@
 require('hexagon')
+require('misc')
 
 board = {}
 
@@ -100,6 +101,24 @@ function board.create(s, x, y)
 		end
 	end
 
+	function self._init_nearby_hex()
+		if n == 0  then return end
+		local ids = {{-1,2},{1,2},{-2,0},{2,0},{-1,-2},{1,-2}}
+		
+		self.foreach_hex(function (h)
+			local nearby_hex = {}
+			for _, id in ipairs(ids) do
+				local rx, ry = h.rx + id[1], h.ry + id[2]
+				local h0 = self.get_hex(rx, ry)
+				if h0 then
+					table.insert(nearby_hex, h0)			
+				end
+			end
+			h.nearby_hex = nearby_hex
+		end)
+		
+	end
+
 	function self.init(s, x, y)
 		self._size = s or 5
 		self._x = x or 300
@@ -110,16 +129,16 @@ function board.create(s, x, y)
 			self._hexagons[i] = {}
 		end
 
-		local hex = hexagon.create(0, 0, 0, 1, self._x, self._y)
-		self._hexagons[0][0] = hex
-		self._expand_init(hex, self._size)
+		local hex_center = hexagon.create(0, 0, 0, 1, self._x, self._y)
+		self._hexagons[0][0] = hex_center
+		self._expand_init(hex_center, self._size)
 		self.foreach_hex(function (h)
 			self._hex_count = self._hex_count + 1
 		end)
 		self._empty_hex_count = self._hex_count
 
 		self._kb_hex = {}
-		self._expand_init_kb(self._hexagons[0][0], self._size)
+		self._expand_init_kb(hex_center, self._size)
 		self._line_up = {}
 		for k, r in pairs(self._kb_hex) do
 			self._line_up[k] = {}
@@ -127,6 +146,8 @@ function board.create(s, x, y)
 				self._line_up[k][b] = false
 			end
 		end
+
+		self._init_nearby_hex()
 	end
 	
 	function self.gen_snapshot()
@@ -199,7 +220,7 @@ function board.create(s, x, y)
 			bh.focus(false)
 		end
 
-		self._update_line_up()		
+		self._update_line_up()
 	end
 
 	function self.unlocate(b, rx, ry)
@@ -289,7 +310,7 @@ function board.create(s, x, y)
 		local hexs = self._kb_hex[k][b]
 		assert(hexs)
 		for _, h in ipairs(hexs) do
-			if not h.is_fill() then
+			if not h.can_line_up() then
 				return false
 			end
 		end
@@ -347,8 +368,16 @@ function board.create(s, x, y)
 
 	function self.clear(hex_list)
 		if hex_list then
+			-- clear self first
 			for _, h in ipairs(hex_list) do
-				self._hexagons[h.rx][h.ry].id = 0
+				h.on_line_up()
+			end
+
+			-- clear nearby
+			for _, h in ipairs(hex_list) do
+				for _, h0 in ipairs(h.nearby_hex) do
+					h0.on_line_up_nearby()
+				end
 			end
 		else
 			self.foreach_hex(function (h)
@@ -374,6 +403,27 @@ function board.create(s, x, y)
 
 	function self.is_all_clear()
 		return self.empty_hex_count() == self._hex_count
+	end
+
+	function self._random_hex(type)
+		local empty_hexs = {}
+		self.foreach_hex(function (h)
+			if h.is_empty() then
+				table.insert(empty_hexs, h)
+			end
+		end)
+		if #empty_hexs > 0 then
+			local h = empty_hexs[math.random(1, #empty_hexs)]
+			h.id = type	
+		end
+	end
+
+	function self.random_icing()
+		self._random_hex(hexagon.HEX_ICING)
+	end
+
+	function self.random_bomb()
+		self._random_hex(hexagon.HEX_BOMB)
 	end
 
 	self.init(s, x, y)

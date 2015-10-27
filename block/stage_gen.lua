@@ -3,52 +3,93 @@ require('block_mgr')
 require('ai')
 require('stage')
 
-local BLOCK_GEN_FUNS = {
-	[1] = function (block_count)
-		local blocks = {}
-		local record = {}
-		local max_block_type = block_mgr.max_block_type()
-		for j = 1, block_count do
-			local btype = math.random(2, max_block_type)
-			while record[btype] do
-				btype = math.random(2, max_block_type)
-			end
-			record[btype] = true
-			local b = block_mgr.gen(btype)
-			b.id = j
-			table.insert(blocks, b)
+local function gen_different_block(block_count)
+	local blocks = {}
+	local record = {}
+	local max_block_type = block_mgr.max_block_type()
+	for j = 1, block_count do
+		local btype = math.random(2, max_block_type)
+		while record[btype] do
+			btype = math.random(2, max_block_type)
 		end
-		return blocks
+		record[btype] = true
+		local b = block_mgr.gen(btype)
+		b.id = j
+		table.insert(blocks, b)
 	end
+	return blocks
+end
+
+local BLOCK_GEN_FUNS = {
+	[1] = gen_different_block,
 }
 
+local function gen_board_ex(board, hex_total, ...)
+	local hexs = {}
+	board.foreach_hex(function (h)
+		h.id = 0
+		table.insert(hexs, h)
+	end)
+
+	-- remove empty hex
+	local cut_off = board.hex_count() - hex_total
+	local i = 0
+	while i < cut_off do
+		local c = math.random(3, 5)
+		i = i + c
+		if i > cut_off then
+			c = c - (i - cut_off)
+			i = cut_off
+		end
+		local start = math.random(1, #hexs - c)
+		for j = 1, c do
+			table.remove(hexs, start)
+		end
+	end
+
+	-- set no color hex types
+	local cfg_list = {...}
+	for i = 1, #cfg_list / 2 do
+		local type = cfg_list[i * 2 - 1]
+		local count = cfg_list[i * 2]
+		for j = 1, count do
+			local id = math.random(1, #hexs)
+			hexs[id].id = type
+			table.remove(hexs, id)
+		end
+	end
+
+	-- set for color hex types
+	for _, h in ipairs(hexs) do
+		h.id = math.random(1, hexagon.max_color)
+	end
+end
+
+local function gen_board_color(board, hex_count)
+	gen_board_ex(board, hex_count)
+end
+
+local function gen_board_icing(board, hex_count)
+	gen_board_ex(board, hex_count, 
+		hexagon.HEX_ICING, 	math.ceil(hex_count / 4))
+end
+
+local function gen_board_bomb(board, hex_count)
+	gen_board_ex(board, hex_count, 
+		hexagon.HEX_BOMB, 	math.ceil(hex_count / 4))
+end
+
+local function gen_board_icing_and_bomb(board, hex_count)
+	gen_board_ex(board, hex_count, 
+		hexagon.HEX_ICING, 	math.ceil(hex_count / 8),
+		hexagon.HEX_BOMB, 	math.ceil(hex_count / 8))
+end
+
 local BOARD_GEN_FUNS = {
-	[1]	 = function (board, hex_count)
-		local hexs = {}
-		board.foreach_hex(function (h)
-			h.id = 0
-			table.insert(hexs, h)
-		end)
-
-		local cut_off = board.hex_count() - hex_count
-		local i = 0
-		while i < cut_off do
-			local c = math.random(3, 5)
-			i = i + c
-			if i > cut_off then
-				c = c - (i - cut_off)
-				i = cut_off
-			end
-			local start = math.random(1, #hexs - c)
-			for j = 1, c do
-				table.remove(hexs, start)
-			end
-		end
-
-		for _, h in ipairs(hexs) do
-			h.id = math.random(1, hexagon.max_id)
-		end
-	end	
+	[1]	= gen_board_color,
+	[2] = gen_board_icing,
+	[3] = gen_board_bomb,
+	[4] = gen_board_icing_and_bomb,
 }
 
 stage_gen = {}
@@ -159,21 +200,22 @@ function main()
 	local RAND_MAX = 32767
 	local board = board.create()
 	local hex_count = 30
-	local block_count = 4
+	local block_count = 3
 	local gen_block_fun_id = 1
-	local gen_board_fun_id = 1
+	local gen_board_fun_id = 2
 
 	stage_gen.set_gen_board_fun(gen_board_fun_id)
 	stage_gen.set_gen_block_fun(gen_block_fun_id)
 	stage_gen.debug(true)
 	for seed = 1, RAND_MAX do
 		local board, blocks, best_move = stage_gen.gen(board, seed, hex_count, block_count)
-		io.write(string.format('block = %d, hex = %d, seed = %d\r', block_count, hex_count, seed))
+		io.write(string.format('block = %d, hex = %d, block_fun = %d, board_fun = %d, seed = %d\r', 
+			block_count, hex_count, gen_block_fun_id, gen_board_fun_id, seed))
 		if board then
 			local filepath = string.format('stages/[%d-%d][%d-%d][%d]',
 				gen_board_fun_id, gen_block_fun_id, hex_count, block_count, seed)
 			stage.save(board, blocks, best_move, filepath)
-			printf('save %s', filepath)
+			printf('save %s\t\t\t\t\t\t\t', filepath)
 		end
 	end
 end

@@ -279,7 +279,17 @@ local _key_routines = {
 	['s'] = function ()
 		_volume = _volume == 1 and 0 or 1		
 		love.audio.setVolume(_volume)
-	end,	
+	end,
+	['i'] = function ()
+		if not _stage_mode then
+			_board.random_icing()
+		end
+	end,
+	['b'] = function ()
+		if not _stage_mode then
+			_board.random_bomb()
+		end
+	end,
 }
 
 function love.keypressed(key)
