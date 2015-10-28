@@ -21,5 +21,5 @@ function love.update(dt)
 end
 
 function love.draw()
-	game.render()	
+	game.render()
 end

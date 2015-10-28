@@ -100,44 +100,55 @@ function hexagon.create(rx, ry, id, scale, x, y)
 			or self.id == HEX_BOMB
 	end
 
-	function self.on_line_up()
+	function self.on_lineup(result, depth)
 		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then
-			self.id = HEX_SLOT
-			return true
-		elseif self.id == HEX_BOMB then
-			self.id = HEX_SLOT
-			for i, h in ipairs(self.nearby_hex) do
-				h.on_bomb()
-			end
-			return true
-		else
-			return false
-		end
-	end
-
-	function self.on_bomb()
-		if self.id ~= HEX_SLOT then
-			if self.id == HEX_BOMB then
+			if result then
+				table.insert(result, {self, self.id, depth})
 				self.id = HEX_SLOT
-				for i, h in ipairs(self.nearby_hex) do
-					h.on_bomb()
+				
+				for _, h in ipairs(self.nearby_hex) do
+					h.on_lineup_nearby(result, depth)
 				end
 			else
 				self.id = HEX_SLOT
 			end
-			
-			return true
-		else
-			return false
+		elseif self.id == HEX_BOMB then
+			if result then 
+				table.insert(result, {self, self.id, depth})
+				self.id = HEX_SLOT
+				for i, h in ipairs(self.nearby_hex) do
+					h.on_bomb(result, depth + 1)
+				end
+			else
+				self.id = HEX_SLOT
+			end
 		end
 	end
 
-	function self.on_line_up_nearby()
+	function self.on_bomb(result, depth)
+		if self.id ~= HEX_SLOT then
+			if result then
+				table.insert(result, {self, self.id, depth})
+				if self.id == HEX_BOMB then
+					self.id = HEX_SLOT
+					for i, h in ipairs(self.nearby_hex) do
+						h.on_bomb(result, depth + 1)
+					end
+				else				
+					self.id = HEX_SLOT
+				end
+			else
+				self.id = HEX_SLOT
+			end
+		end
+	end
+
+	function self.on_lineup_nearby(result, depth)
 		if self.id == HEX_ICING then
+			if result then
+				table.insert(result, {self, self.id, depth})
+			end
 			self.id = HEX_SLOT
-			return true
-		else
-			return false
 		end
 	end
 

@@ -150,10 +150,7 @@ function stage_gen.stage_ok(board, m)
 	while m do
 		board.locate_by_rx_ry(m.block, m.rx, m.ry)
 		if board.can_line_up() then
-			local result = board.get_line_up_result()
-			for _, hex_list in ipairs(result) do				
-				board.clear(hex_list)
-			end
+			board.lineup()
 		end
 		m = m.next_move
 	end
@@ -169,27 +166,20 @@ function stage_gen.remove_left_hex_depth(board, m, depth)
 	local r = false
 	if not m then
 		if depth == 0 then
-			board.clear()			
+			board.clear_all()			
 			r = true
 		end			
 	else
 		board.locate_by_rx_ry(m.block, m.rx, m.ry)		
 		if board.can_line_up() then
-			local result = board.get_line_up_result()
-			for _, hex_list in ipairs(result) do				
-				board.clear(hex_list)
-			end
-
+			local lineup_result = board.lineup()
 			r = stage_gen.remove_left_hex_depth(board, m.next_move, depth - 1)
-
-			for _, hex_list in ipairs(result) do				
-				board.update(hex_list)
-			end
+			board.undo_lineup(lineup_result)
 		else
 			r = stage_gen.remove_left_hex_depth(board, m.next_move, depth - 1)
 		end
 
-		board.unlocate(m.block, m.rx, m.ry)
+		board.undo_locate(m.block, m.rx, m.ry)
 	end
 
 	return r
@@ -202,7 +192,7 @@ function main()
 	local hex_count = 30
 	local block_count = 3
 	local gen_block_fun_id = 1
-	local gen_board_fun_id = 2
+	local gen_board_fun_id = 4
 
 	stage_gen.set_gen_board_fun(gen_board_fun_id)
 	stage_gen.set_gen_block_fun(gen_block_fun_id)
@@ -215,7 +205,7 @@ function main()
 			local filepath = string.format('stages/[%d-%d][%d-%d][%d]',
 				gen_board_fun_id, gen_block_fun_id, hex_count, block_count, seed)
 			stage.save(board, blocks, best_move, filepath)
-			printf('save %s\t\t\t\t\t\t\t', filepath)
+			printf('save %s\t\t\t\t\t', filepath)
 		end
 	end
 end

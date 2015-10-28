@@ -1,5 +1,8 @@
 require('hexagon')
 require('misc')
+require('row_ani')
+require('icing_ani')
+require('bomb_ani')
 
 board = {}
 
@@ -14,6 +17,8 @@ function board.create(s, x, y)
 	self._kb_hex = nil
 	self._hex_count = 0
 	self._empty_hex_count = 0
+	self._lineup_ani_objs = {}
+	self._is_lineup_ani_end = true
 
 	function self.print()
 		for k, r in pairs(self._kb_hex) do
@@ -223,7 +228,7 @@ function board.create(s, x, y)
 		self._update_line_up()
 	end
 
-	function self.unlocate(b, rx, ry)
+	function self.undo_locate(b, rx, ry)
 		local hex_list = b.get_hex_list()
 		for _, h in ipairs(hex_list) do
 			local bh = self.get_hex(rx + h.rx, ry + h.ry)
@@ -240,6 +245,10 @@ function board.create(s, x, y)
 			return self._hexagons[rx][ry]
 		end
 
+	end
+
+	function self.set_hex(rx, ry, id)
+		self._hexagons[rx][ry].id = id
 	end
 
 	function self.can_locate_any(b)
@@ -281,13 +290,42 @@ function board.create(s, x, y)
 	function self.refresh()
 		self.foreach_hex(function (h)
 			h.id = 0
-		end)
+		end)		
 	end
 
 	function self.draw()
 		self.foreach_hex(function (h)
 			h.draw()
 		end)
+
+		for _, obj in ipairs(self._lineup_ani_objs) do
+			obj.draw()
+		end
+	end
+
+	function self.update(dt)
+		if not self._is_lineup_ani_end then
+			local obj_to_remove = {}
+			for _, obj in ipairs(self._lineup_ani_objs) do
+				obj.update(dt)
+				if obj.is_end() then
+					table.insert(obj_to_remove, obj)
+				end
+			end
+
+			for _, obj in ipairs(obj_to_remove) do
+				for i, obj0 in ipairs(self._lineup_ani_objs) do
+					if obj0 == obj then
+						table.remove(self._lineup_ani_objs, i)
+						break
+					end
+				end
+			end
+
+			if #self._lineup_ani_objs <= 0 then
+				self._start_next_lineup_ani()
+			end
+		end
 	end
 
 	function self._get_kb(h1, h2)
@@ -346,10 +384,94 @@ function board.create(s, x, y)
 		return self._line_up_count > 0
 	end
 
+	function self.lineup()
+		assert(self.can_line_up())
+		local rows = self.get_lineup_rows()
+		local result = {}
+		for i, row in ipairs(rows) do
+			self.do_lineup(row, result, i)
+		end
+		return result
+	end
+
+	function self.undo_lineup(result)
+		for _, h in ipairs(result) do
+			h[1].id = h[2]
+		end	
+	end
+
+	function self.start_lineup_ani(end_cb)
+		local rows = self.get_lineup_rows()
+		local result = self.lineup()
+		self.undo_lineup(result)
+
+		self._lineup_result = result
+		self._lineup_rows = rows
+		self._lineup_ani_depth = 0
+		self._is_lineup_ani_end = false
+		self._start_next_lineup_ani()
+		self._lineup_ani_end_cb = end_cb
+	end
+
+	function self._start_next_lineup_ani()
+		local depth = self._lineup_ani_depth + 1
+		local has_ani = false
+
+		-- add row lineup ani
+		local row = self._lineup_rows[depth]
+		if row then
+			local ani = row_ani.create(row)
+			ani.on_end(function ()
+				for _, h in ipairs(row) do
+					h.on_lineup()
+				end
+			end)
+			table.insert(self._lineup_ani_objs, ani)
+			has_ani = true
+		end
+
+		-- add other hex explotion ani
+		for _, h in ipairs(self._lineup_result) do
+			local hex, id, depth0 = h[1], h[2], h[3]
+			if depth0 == depth then
+				if id == hexagon.HEX_ICING then
+					table.insert(self._lineup_ani_objs, icing_ani.create(hex))
+					hex.on_lineup_nearby()
+					has_ani = true
+				elseif id == hexagon.HEX_BOMB then
+					local ani = bomb_ani.create(hex)
+					ani.on_bomb(function ()
+						hex.id = hexagon.HEX_SLOT
+						for _, h0 in ipairs(hex.nearby_hex) do
+							h0.on_bomb()
+						end
+					end)
+					table.insert(self._lineup_ani_objs, ani)
+					has_ani = true
+				else
+					hex.on_lineup()
+				end
+			end
+		end
+
+		if not has_ani then			
+			self._is_lineup_ani_end = true
+			if self._lineup_ani_end_cb then
+				self._lineup_ani_end_cb()
+			end
+		else
+			self._lineup_ani_depth = depth
+		end
+	end
+
+	function self.is_lineup_ani_end()
+		return self._is_lineup_ani_end
+	end
+
 	-- return
 	-- rows = {hex_list1, hex_list2, ..}
-	function self.get_line_up_result()
-		local result = {}
+	function self.get_lineup_rows()
+		local rows = {}
 		for k, r in pairs(self._line_up) do
 			for b, v in pairs(r) do
 				if v then
@@ -357,40 +479,29 @@ function board.create(s, x, y)
 					for i, h in ipairs(self._kb_hex[k][b]) do
 						hex_list[i] = h.copy()
 					end
-					table.insert(result, hex_list)
+					table.insert(rows, hex_list)
 				end
 			end
 		end
 
 		self._update_line_up()
+		return rows
+	end
+
+	function self.do_lineup(row, result, depth)
+		result = result or {}
+		depth = depth or 1
+		for _, h in ipairs(row) do
+			h.on_lineup(result, depth)
+		end
 		return result
 	end
 
-	function self.clear(hex_list)
-		if hex_list then
-			-- clear self first
-			for _, h in ipairs(hex_list) do
-				h.on_line_up()
-			end
-
-			-- clear nearby
-			for _, h in ipairs(hex_list) do
-				for _, h0 in ipairs(h.nearby_hex) do
-					h0.on_line_up_nearby()
-				end
-			end
-		else
-			self.foreach_hex(function (h)
-				h.id = 0
-			end)
-		end
-	end
-
-	function self.update(hex_list)
-		for _, h in ipairs(hex_list) do
-			self._hexagons[h.rx][h.ry].id = h.id			
-		end		
-	end
+	function self.clear_all()
+		self.foreach_hex(function (h)
+			h.id = 0
+		end)
+	end	
 
 	function self.hex_count()
 		return self._hex_count
@@ -424,7 +535,7 @@ function board.create(s, x, y)
 
 	function self.random_bomb()
 		self._random_hex(hexagon.HEX_BOMB)
-	end
+	end	
 
 	self.init(s, x, y)
 	return self

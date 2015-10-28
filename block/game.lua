@@ -155,6 +155,7 @@ function game.restart_stage()
 end
 
 function game.update(dt)
+	_board.update(dt)
 	if _explotion then
 		_explotion.update(dt)
 	end
@@ -449,6 +450,41 @@ function game.check_end()
 end
 
 function game.locate(b, rx, ry)
+	_board.locate_by_rx_ry(b, rx, ry)
+	block_mgr.remove_select()
+	
+	local current_s = score.block_score(b)
+	_score = _score + current_s
+	game.add_score_ani(current_s, rx, ry)
+	sound.play('place')
+
+	if _board.can_line_up() then
+		local result = _board.get_lineup_rows()
+		_turn_finish = false
+		_board.start_lineup_ani(function ()
+			_turn_finish = true
+			if #result > 1 then
+				sound.play_tier(#result - 1)
+			end
+			local current_s = score.line_up_score(result)
+			_score = _score + current_s
+			game.add_score_ani(current_s, rx, ry)
+			if not _stage_mode then
+				block_mgr.refill()
+			end
+			game.check_end()
+		end)
+	else
+		_turn_finish = true
+		if not _stage_mode then
+			block_mgr.refill()
+		end
+
+		game.check_end()
+	end
+end
+
+function game.locate1(b, rx, ry)
 	_board.locate_by_rx_ry(b, rx, ry)	
 	block_mgr.remove_select()
 	
@@ -458,7 +494,7 @@ function game.locate(b, rx, ry)
 	sound.play('place')
 
 	if _board.can_line_up() then
-		local result = _board.get_line_up_result()		
+		local result = _board.get_lineup_rows()
 		_explotion = explotion.create(result)
 		_explotion.start()
 		_explotion.on_end(function ()
@@ -476,7 +512,7 @@ function game.locate(b, rx, ry)
 			game.check_end()
 		end)
 		_explotion.on_row_ex_end(function (r)
-			_board.clear(result[r])			
+			_board.do_lineup(result[r])
 		end)
 	else
 		_turn_finish = true

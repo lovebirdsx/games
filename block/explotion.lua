@@ -8,7 +8,7 @@ function explotion.create(line_up_result)
 	local row_id = 1
 	local row_ex = nil
 
-	function self._start_row_explotin(r)		
+	function self._start_row_explotin(r)
 		sound.play('row' .. r)
 		row_id = r
 		row_ex = row_explotion.create(line_up_result[r])		

@@ -60,18 +60,11 @@ function ai.get_best_move_depth(board, blocks, depth)
 		local next_move = nil
 		local can_line_up = false
 		if board.can_line_up() then
-			local result = board.get_line_up_result()			
-			for _, hex_list in ipairs(result) do
-				board.clear(hex_list)
-			end
-
-			table.remove(blocks, m.block_pos)			
+			local r = board.lineup()
+			table.remove(blocks, m.block_pos)
 			next_move, score0 = ai.get_best_move_depth(board, blocks, depth - 1)
 			table.insert(blocks, m.block_pos, m.block)
-
-			for _, hex_list in ipairs(result) do
-				board.update(hex_list)
-			end
+			board.undo_lineup(r)
 
 			if depth == 1 then
 				pass_no_line_up_block = true
@@ -85,7 +78,7 @@ function ai.get_best_move_depth(board, blocks, depth)
 			end
 		end
 
-		board.unlocate(m.block, m.rx, m.ry)
+		board.undo_locate(m.block, m.rx, m.ry)
 
 		if score0 > score then
 			score = score0

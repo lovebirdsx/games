@@ -17,8 +17,9 @@ local FADE_CFG = {
 function row_explotion.create(row_hexs)
 	local self = {}
 	local passed = 0
+	local is_end = false
 	local add_color = {FADE_CFG[1].add, FADE_CFG[1].add, 
-		FADE_CFG[1].add, 255}	
+		FADE_CFG[1].add, 255}
 
 	function self._get_add_color(t)
 		local add = 0
@@ -38,18 +39,33 @@ function row_explotion.create(row_hexs)
 	end
 
 	function self.update(dt)
+		if is_end then return end
+
 		passed = passed + dt
 		if passed <= FADE_CFG[#FADE_CFG].t then
 			add_color = self._get_add_color(passed)
 		else
-			self.on_end_cb()
+			is_end = true
+			if self.on_end_cb then
+				self.on_end_cb()
+			end
 		end
 	end
 
 	function self.draw()
+		if is_end then return end
+
 		for _, hex in ipairs(row_hexs) do
 			hex.draw_c(add_color, add_color[4])
 		end
+	end
+
+	function self.type()
+		return 'row_explotion'
+	end
+
+	function self.is_end()
+		return is_end
 	end
 
 	function self.on_end(cb)
