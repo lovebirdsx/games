@@ -1,5 +1,7 @@
 require('render')
+require('misc')
 
+-- seq can not be changed
 local HEX_SLOT = 0
 local HEX_COLOR1 = 1
 local HEX_COLOR2 = 2
@@ -29,21 +31,7 @@ local HEX_COLOR = {
 	[HEX_COLOR3] = {245,162,11},
 	[HEX_COLOR4] = {137,140,255},
 	[HEX_COLOR5] = {113,224,150},
-	[HEX_COLOR6] = {207,243,129},
-	[HEX_ICING] = {255,255,255},
-	[HEX_BOMB] = {255,255,255},
-}
-
-local DRAW_FUN = {
-	[HEX_SLOT] = render.draw_hex_slot,
-	[HEX_COLOR1] = render.draw_hex_color,
-	[HEX_COLOR2] = render.draw_hex_color,
-	[HEX_COLOR3] = render.draw_hex_color,
-	[HEX_COLOR4] = render.draw_hex_color,
-	[HEX_COLOR5] = render.draw_hex_color,
-	[HEX_COLOR6] = render.draw_hex_color,
-	[HEX_ICING] = render.draw_icing,
-	[HEX_BOMB] = render.draw_bomb,
+	[HEX_COLOR6] = {207,243,129},	
 }
 
 function hexagon.create(rx, ry, id, scale, x, y)
@@ -58,22 +46,54 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		nearby_hex = nil,
 	}
 
-	function self.string()
-		return string.format('(%2d,%2d,%2d)', self.rx, self.ry, self.id)	
+	local _draw_funs
+
+	function self._draw_hex_color()
+		self.draw_c(HEX_COLOR[self.id], self.is_focus and 128 or 255)
 	end
+
+	function self._draw_bomb()
+		love.graphics.setColor(77, 77, 75)
+		render.draw_hex_slot(x, y, scale)
+		love.graphics.setColor(255, 255, 255)
+		render.draw_bomb(self.x, self.y, self.scale)
+	end
+
+	function self._draw_icing()
+		love.graphics.setColor(77, 77, 75)
+		render.draw_hex_slot(x, y, scale)
+		love.graphics.setColor(255, 255, 255)
+		render.draw_icing(self.x, self.y, self.scale)
+	end
+
+	_draw_funs = {
+		[HEX_SLOT] = self._draw_hex_color,
+		[HEX_COLOR1] = self._draw_hex_color,
+		[HEX_COLOR2] = self._draw_hex_color,
+		[HEX_COLOR3] = self._draw_hex_color,
+		[HEX_COLOR4] = self._draw_hex_color,
+		[HEX_COLOR5] = self._draw_hex_color,
+		[HEX_COLOR6] = self._draw_hex_color,
+		[HEX_ICING] = self._draw_icing,
+		[HEX_BOMB] = self._draw_bomb,
+	}
 
 	function self.draw(shadow)
 		if shadow then
 			render.draw_hex_shadow(self.x, self.y, self.scale)
 		end
 		
-		self.draw_c(HEX_COLOR[self.id], self.is_focus and 128 or 255)
+		_draw_funs[self.id]()
 	end
 
 	function self.draw_c(c, a)
 		love.graphics.setColor(c[1], c[2], c[3], a)
-		DRAW_FUN[self.id](self.x, self.y, self.scale)
+		render.draw_hex_color(self.x, self.y, self.scale)
 	end
+
+	function self.string()
+		return string.format('(%2d,%2d,%2d)', self.rx, self.ry, self.id)	
+	end	
 
 	function self.test_point(x, y, range)
 		range = range or 0.9
@@ -100,65 +120,62 @@ function hexagon.create(rx, ry, id, scale, x, y)
 			or self.id == HEX_BOMB
 	end
 
-	function self.on_lineup(result, depth)
-		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then
-			if result then
-				table.insert(result, {self, self.id, depth})
-				self.id = HEX_SLOT
-				
-				for _, h in ipairs(self.nearby_hex) do
-					h.on_lineup_nearby(result, depth)
+	-- param
+	-- 	event is the event type, as fllows:
+	--		lineup
+	--		bomb_prepare
+	--		bomb
+	--		lineup_near_by	-- 
+	--	result is the hex effected, like:
+	-- 		{
+	--			{hex=hex1, event=event1},
+	--			{hex=hex2, event=event2},
+	--		 ...
+	--		}	
+	function self.on_event(event, result)
+
+		self['_on_event_' .. event](result)
+
+		return result
+	end
+
+	function self._on_event_lineup(result)
+		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then			
+			self.id = HEX_SLOT			
+			for _, h in ipairs(self.nearby_hex) do
+				if h.id == HEX_ICING then
+					result[#result + 1] = {hex = h, event='lineup_nearby'}
 				end
-			else
-				self.id = HEX_SLOT
 			end
 		elseif self.id == HEX_BOMB then
-			if result then 
-				table.insert(result, {self, self.id, depth})
-				self.id = HEX_SLOT
-				for i, h in ipairs(self.nearby_hex) do
-					h.on_bomb(result, depth + 1)
-				end
-			else
-				self.id = HEX_SLOT
+			result[#result + 1] = {hex = self, event='bomb_prepare'}			
+		end
+	end
+
+	function self._on_event_bomb_prepare(result)
+		self.id = HEX_SLOT
+		for i, h in ipairs(self.nearby_hex) do
+			if h.id ~= HEX_SLOT then
+				result[#result + 1] = {hex = h, event='bomb'}
 			end
 		end
 	end
 
-	function self.on_bomb(result, depth)
-		if self.id ~= HEX_SLOT then
-			if result then
-				table.insert(result, {self, self.id, depth})
-				if self.id == HEX_BOMB then
-					self.id = HEX_SLOT
-					for i, h in ipairs(self.nearby_hex) do
-						h.on_bomb(result, depth + 1)
-					end
-				else				
-					self.id = HEX_SLOT
-				end
-			else
-				self.id = HEX_SLOT
-			end
-		end
-	end
-
-	function self.on_lineup_nearby(result, depth)
+	function self._on_event_lineup_nearby(result)
 		if self.id == HEX_ICING then
-			if result then
-				table.insert(result, {self, self.id, depth})
-			end
 			self.id = HEX_SLOT
 		end
 	end
 
-	function self.copy()
-		local c = {}
-		for k,v in pairs(self) do
-			c[k] = v
+	function self._on_event_bomb(result)
+		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then	
+			self.id = HEX_SLOT
+		elseif self.id == HEX_BOMB then
+			result[#result + 1] = {hex = self, event='bomb_prepare'}
+		elseif self.id == HEX_ICING then
+			self.id = HEX_SLOT
 		end
-		return c
 	end
-
+	
 	return self
 end

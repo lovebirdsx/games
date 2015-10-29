@@ -385,26 +385,114 @@ function board.create(s, x, y)
 	end
 
 	function self.lineup()
-		assert(self.can_line_up())
 		local rows = self.get_lineup_rows()
+		local depth = 0
 		local result = {}
-		for i, row in ipairs(rows) do
-			self.do_lineup(row, result, i)
+		local event_result = {}
+		while true do			
+			local depth_result = {}
+			local next_step_event = {}
+			for _, r in ipairs(event_result) do
+				local hex, event = r.hex, r.event
+				local id = hex.id
+				hex.on_event(event, next_step_event)
+				if id ~= hex.id then
+					depth_result[hex] = id
+				end
+			end
+
+			depth = depth + 1
+			local row = rows[depth]
+			if row then
+				for _, h in ipairs(row) do
+					local hex = self._hexagons[h.rx][h.ry]				
+					local id = hex.id
+					hex.on_event('lineup', next_step_event)
+					if id ~= hex.id then
+						depth_result[hex] = id
+					end
+				end
+			end
+
+			result[depth] = depth_result
+			event_result = next_step_event
+
+			if #next_step_event <= 0 and depth >= #rows then
+				break
+			end
 		end
+		
 		return result
 	end
 
-	function self.undo_lineup(result)
-		for _, h in ipairs(result) do
-			h[1].id = h[2]
-		end	
+	function self.undo_lineup(result)		
+		for depth = #result, 1, -1 do
+			local depth_result = result[depth]
+			for hex, id in pairs(depth_result) do
+				hex.id = id				
+			end
+		end		
 	end
 
-	function self.start_lineup_ani(end_cb)
+	function self._resort_lineup_result(result)
+		local record = {}
+		local remove = {}
+		for _, ent in ipairs(result) do
+			local hex, id, depth = ent[1], ent[2], ent[3]
+			if not record[hex.rx] then record[hex.rx] = {} end
+
+			local ent0 = record[hex.rx][hex.ry]
+			if not ent0 then
+			 	record[hex.rx][hex.ry] = ent
+			else
+				local hex0, id0, depth0 = ent0[1], ent0[2], ent0[3]
+				if depth < depth0 then
+					record[hex.rx][hex.ry] = ent
+					if id == hexagon.HEX_SLOT then
+						ent[3] = id0
+					end
+					table.insert(remove, ent0)
+				else
+					table.insert(remove, ent)
+				end
+			end
+		end
+
+		for _, ent1 in ipairs(remove) do
+			for i, ent2 in ipairs(result) do
+				if ent1 == ent2 then
+					table.remove(result, i)
+					local h, id, depth = ent1[1], ent1[2], ent1[3]
+					printf('remove type=%d pos=(%d,%d) depth=%d', id, h.rx, h.ry, depth)
+					break
+				end
+			end
+		end
+
+		return result
+	end
+
+	function self._get_lineup_max_depth(result)
+		local max_depth = 0
+		for _, ent in ipairs(result) do
+			local depth = ent[3]
+			if depth > max_depth then
+				max_depth = depth
+			end
+		end
+		return max_depth
+	end
+
+	function self.start_lineup_ani1(end_cb)
 		local rows = self.get_lineup_rows()
 		local result = self.lineup()
+		for _, r in ipairs(result) do
+			local h, id, depth = r[1], r[2], r[3]
+			printf('type=%d pos=(%d,%d) depth=%d', id, h.rx, h.ry, depth)
+		end
 		self.undo_lineup(result)
 
+		self._lineup_max_depth = self._get_lineup_max_depth(result)
 		self._lineup_result = result
 		self._lineup_rows = rows
 		self._lineup_ani_depth = 0
@@ -413,88 +501,78 @@ function board.create(s, x, y)
 		self._lineup_ani_end_cb = end_cb
 	end
 
+	function self.start_lineup_ani(end_cb)
+		local rows = self.get_lineup_rows()
+		local result = self.lineup()
+		for depth, r in ipairs(result) do
+			for h, id in pairs(r) do				
+				printf('type=%d pos=(%d,%d) depth=%d', id, h.rx, h.ry, depth)
+			end			
+		end
+		self.undo_lineup(result)
+
+		self._lineup_max_depth = #result
+		self._lineup_result = result
+		self._lineup_rows = rows
+		self._lineup_ani_depth = 0
+		self._is_lineup_ani_end = false
+		self._lineup_ani_end_cb = end_cb
+		self._start_next_lineup_ani()
+	end
+
 	function self._start_next_lineup_ani()
-		local depth = self._lineup_ani_depth + 1
-		local has_ani = false
-
-		-- add row lineup ani
-		local row = self._lineup_rows[depth]
-		if row then
-			local ani = row_ani.create(row)
-			ani.on_end(function ()
-				for _, h in ipairs(row) do
-					h.on_lineup()
-				end
-			end)
-			table.insert(self._lineup_ani_objs, ani)
-			has_ani = true
-		end
-
-		-- add other hex explotion ani
-		for _, h in ipairs(self._lineup_result) do
-			local hex, id, depth0 = h[1], h[2], h[3]
-			if depth0 == depth then
-				if id == hexagon.HEX_ICING then
-					table.insert(self._lineup_ani_objs, icing_ani.create(hex))
-					hex.on_lineup_nearby()
-					has_ani = true
-				elseif id == hexagon.HEX_BOMB then
-					local ani = bomb_ani.create(hex)
-					ani.on_bomb(function ()
-						hex.id = hexagon.HEX_SLOT
-						for _, h0 in ipairs(hex.nearby_hex) do
-							h0.on_bomb()
-						end
-					end)
-					table.insert(self._lineup_ani_objs, ani)
-					has_ani = true
-				else
-					hex.on_lineup()
-				end
-			end
-		end
-
-		if not has_ani then			
+		local depth = self._lineup_ani_depth + 1		
+		if depth > self._lineup_max_depth then
 			self._is_lineup_ani_end = true
 			if self._lineup_ani_end_cb then
 				self._lineup_ani_end_cb()
 			end
-		else
-			self._lineup_ani_depth = depth
+			return
 		end
-	end
+
+		-- add row lineup ani
+		local row = self._lineup_rows[depth]
+		if row then
+			local ani = row_ani.create(row)			
+			table.insert(self._lineup_ani_objs, ani)			
+		end
+
+		-- add other hex explotion ani
+		for hex, id in pairs(self._lineup_result[depth]) do
+			if id == hexagon.HEX_ICING then
+				table.insert(self._lineup_ani_objs, icing_ani.create(hex))					
+				hex.id = hexagon.HEX_SLOT				
+			elseif id == hexagon.HEX_BOMB then
+				local ani = bomb_ani.create(hex)
+				ani.on_bomb(function ()
+					hex.id = hexagon.HEX_SLOT					
+				end)
+				table.insert(self._lineup_ani_objs, ani)			
+			else
+				hex.id = hexagon.HEX_SLOT
+			end			
+		end
+
+		self._lineup_ani_depth = depth		
+	end	
 
 	function self.is_lineup_ani_end()
 		return self._is_lineup_ani_end
 	end
 
 	-- return
-	-- rows = {hex_list1, hex_list2, ..}
+	-- rows = {hex_list1, hex_list2, ..}	
 	function self.get_lineup_rows()
 		local rows = {}
 		for k, r in pairs(self._line_up) do
 			for b, v in pairs(r) do
 				if v then
-					local hex_list = {}
-					for i, h in ipairs(self._kb_hex[k][b]) do
-						hex_list[i] = h.copy()
-					end
-					table.insert(rows, hex_list)
+					table.insert(rows, self._kb_hex[k][b])
 				end
 			end
 		end
-
-		self._update_line_up()
+				
 		return rows
-	end
-
-	function self.do_lineup(row, result, depth)
-		result = result or {}
-		depth = depth or 1
-		for _, h in ipairs(row) do
-			h.on_lineup(result, depth)
-		end
-		return result
 	end
 
 	function self.clear_all()

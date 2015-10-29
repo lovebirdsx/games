@@ -1,4 +1,5 @@
 require('sound')
+require('hexagon')
 
 row_ani = {}
 
@@ -56,7 +57,9 @@ function row_ani.create(hexs)
 		if is_end then return end
 
 		for _, hex in ipairs(hexs) do
-			hex.draw_c(add_color, add_color[4])
+			if hex.id == hexagon.HEX_SLOT then
+				hex.draw_c(add_color, add_color[4])
+			end
 		end
 	end
 

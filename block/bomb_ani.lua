@@ -35,6 +35,7 @@ function bomb_ani.create(hex)
 	end
 
 	function self.draw()
+		love.graphics.setColor(255, 255, 255, 255)
 		render.draw_bomb_ani(cell_id, hex.x, hex.y, 1.5)
 	end
 
