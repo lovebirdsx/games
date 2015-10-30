@@ -134,10 +134,11 @@ function game.load_stage()
 	end
 end
 
-function game.resart()
+function game.restart()
 	_game_over =false
 	_score = 0
 	_is_highscore = false
+	_selected_block = nil
 	_board = board.create()
 	block_mgr.init()	
 
@@ -149,6 +150,7 @@ function game.restart_stage()
 	_stage_failed = false
 	_stage_clear = false
 	_score = 0
+	_selected_block = nil
 	game.load_stage()
 	sound.stop('gameover')
 	sound.play('music')
@@ -162,21 +164,7 @@ function game.update(dt)
 
 	for _, ani in ipairs(_score_ani) do
 		ani.update(dt)
-	end
-
-	if _game_over or _stage_clear or _stage_failed then
-		if love.mouse.isDown('l') then
-			if not _stage_mode then
-				game.resart()
-			else
-				if _stage_failed then
-					game.restart_stage()
-				else
-					game.load_next_stage()
-				end
-			end
-		end	
-	end
+	end	
 
 	if _develop and _auto_run and _turn_finish then
 		game.auto_move()
@@ -237,7 +225,7 @@ local _key_routines = {
 		if _stage_mode then
 			game.load_stage()
 		else
-			game.resart()
+			game.restart()
 		end
 	end,	
 	['left'] = function ()
@@ -256,7 +244,7 @@ local _key_routines = {
 		if _stage_mode then
 			game.load_stage()
 		else
-			game.resart()
+			game.restart()
 		end
 	end,
 	['a'] = function ()
@@ -499,8 +487,30 @@ function game.locate_block(x, y)
 end
 
 function love.mousepressed(x, y, button)
-	if button == 'l' and not _is_auto_running then
-		game.start_move_block_by_pos(x, y)
+	if button == 'l'  then
+		if _game_over or _stage_clear or _stage_failed then
+			if not _stage_mode then
+				game.restart()
+			else
+				if _stage_failed then
+					game.restart_stage()
+				else
+					game.load_next_stage()
+				end
+			end
+		else
+			if not _is_auto_running then
+				game.start_move_block_by_pos(x, y)		
+			end
+		end
+	end
+
+	if button == 'r' then
+		if _stage_mode then
+			game.restart_stage()
+		else
+			game.restart()
+		end
 	end
 end
 
