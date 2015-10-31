@@ -395,7 +395,7 @@ function board.create(s, x, y)
 			for _, r in ipairs(event_result) do
 				local hex, event = r.hex, r.event
 				local id = hex.id
-				hex.on_event(event, next_step_event)
+				hex.on_event(self, event, next_step_event)
 				if id ~= hex.id then
 					depth_result[hex] = id
 				end
@@ -407,7 +407,7 @@ function board.create(s, x, y)
 				for _, h in ipairs(row) do
 					local hex = self._hexagons[h.rx][h.ry]				
 					local id = hex.id
-					hex.on_event('lineup', next_step_event)
+					hex.on_event(self, 'lineup', next_step_event)
 					if id ~= hex.id then
 						depth_result[hex] = id
 					end
@@ -613,7 +613,12 @@ function board.create(s, x, y)
 
 	function self.random_bomb()
 		self._random_hex(hexagon.HEX_BOMB)
-	end	
+	end
+
+	function self.random_2arrow()
+		local id = math.random(1, 3)
+		self._random_hex(hexagon.HEX_2ARROW1 - 1 + id)
+	end
 
 	self.init(s, x, y)
 	return self

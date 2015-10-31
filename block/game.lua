@@ -5,7 +5,6 @@ require('block_mgr')
 require('score')
 require('font')
 require('sound')
-require('explotion')
 require('ai')
 require('text_effect')
 require('timer')
@@ -276,6 +275,11 @@ local _key_routines = {
 	['b'] = function ()
 		if not _stage_mode then
 			_board.random_bomb()
+		end
+	end,
+	['n'] = function ()
+		if not _stage_mode then
+			_board.random_2arrow()
 		end
 	end,
 }

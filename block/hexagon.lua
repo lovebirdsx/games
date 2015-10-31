@@ -11,6 +11,9 @@ local HEX_COLOR5 = 5
 local HEX_COLOR6 = 6
 local HEX_ICING = 7
 local HEX_BOMB = 8
+local HEX_2ARROW1 = 9
+local HEX_2ARROW2 = 10
+local HEX_2ARROW3 = 11
 
 hexagon = {w = 59, h = 50, max_color = 6,
 	HEX_SLOT = HEX_SLOT,
@@ -22,6 +25,9 @@ hexagon = {w = 59, h = 50, max_color = 6,
 	HEX_COLOR6 = HEX_COLOR6,
 	HEX_ICING = HEX_ICING,
 	HEX_BOMB = HEX_BOMB,
+	HEX_2ARROW1 = HEX_2ARROW1,
+	HEX_2ARROW2 = HEX_2ARROW2,
+	HEX_2ARROW3 = HEX_2ARROW3,
 }
 
 local HEX_COLOR = {
@@ -31,7 +37,10 @@ local HEX_COLOR = {
 	[HEX_COLOR3] = {245,162,11},
 	[HEX_COLOR4] = {137,140,255},
 	[HEX_COLOR5] = {113,224,150},
-	[HEX_COLOR6] = {207,243,129},	
+	[HEX_COLOR6] = {207,243,129},
+	[HEX_2ARROW1] = {255,137,181},
+	[HEX_2ARROW2] = {137,140,255},
+	[HEX_2ARROW3] = {207,243,129},
 }
 
 function hexagon.create(rx, ry, id, scale, x, y)
@@ -66,6 +75,31 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		render.draw_icing(self.x, self.y, self.scale)
 	end
 
+	function self._draw_2arrow(rotato)
+		love.graphics.setColor(77, 77, 75)
+		render.draw_hex_slot(x, y, scale)
+		-- local c = HEX_COLOR[self.id]
+		-- love.graphics.setColor(c[1], c[2], c[3])
+		love.graphics.setColor(255, 255, 255)
+		render.draw_2arrow(self.x, self.y, self.scale, rotato)
+	end
+
+	function self._draw_2arrow1()
+		self._draw_2arrow(0)
+	end
+
+	function self._draw_2arrow1()
+		self._draw_2arrow(0)
+	end
+
+	function self._draw_2arrow2()
+		self._draw_2arrow(math.pi / 360 * 120)
+	end
+
+	function self._draw_2arrow3()
+		self._draw_2arrow(math.pi / 360 * 240)
+	end
+
 	_draw_funs = {
 		[HEX_SLOT] = self._draw_hex_color,
 		[HEX_COLOR1] = self._draw_hex_color,
@@ -76,6 +110,9 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		[HEX_COLOR6] = self._draw_hex_color,
 		[HEX_ICING] = self._draw_icing,
 		[HEX_BOMB] = self._draw_bomb,
+		[HEX_2ARROW1] = self._draw_2arrow1,
+		[HEX_2ARROW2] = self._draw_2arrow2,
+		[HEX_2ARROW3] = self._draw_2arrow3,
 	}
 
 	function self.draw(shadow)
@@ -132,14 +169,14 @@ function hexagon.create(rx, ry, id, scale, x, y)
 	--			{hex=hex2, event=event2},
 	--		 ...
 	--		}	
-	function self.on_event(event, result)
+	function self.on_event(board, event, result)
 
-		self['_on_event_' .. event](result)
+		self['_on_event_' .. event](board, result)
 
 		return result
 	end
 
-	function self._on_event_lineup(result)
+	function self._on_event_lineup(board, result)
 		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then			
 			self.id = HEX_SLOT			
 			for _, h in ipairs(self.nearby_hex) do
@@ -152,7 +189,7 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		end
 	end
 
-	function self._on_event_bomb_prepare(result)
+	function self._on_event_bomb_prepare(board, result)
 		self.id = HEX_SLOT
 		for i, h in ipairs(self.nearby_hex) do
 			if h.id ~= HEX_SLOT then
@@ -161,13 +198,13 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		end
 	end
 
-	function self._on_event_lineup_nearby(result)
+	function self._on_event_lineup_nearby(board, result)
 		if self.id == HEX_ICING then
 			self.id = HEX_SLOT
 		end
 	end
 
-	function self._on_event_bomb(result)
+	function self._on_event_bomb(board, result)
 		if HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6 then	
 			self.id = HEX_SLOT
 		elseif self.id == HEX_BOMB then

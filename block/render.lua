@@ -5,7 +5,7 @@ local _img_shadow
 local _img_icing
 local _img_bomb
 local _img_arrow
-local _img_arrow2
+local _img_2arrow
 local _img_bomb_ani
 local _img_icing_ani
 local _quad_hex_left
@@ -14,7 +14,7 @@ local _quad_shadow
 local _quad_icing
 local _quad_bomb
 local _quad_arrow
-local _quad_arrow2
+local _quad_2arrow
 local _quads_bomb_ani
 local _quads_icing_ani
 
@@ -50,7 +50,7 @@ function render.init()
 	_img_icing = love.graphics.newImage('image/icing.png')
 	_img_bomb = love.graphics.newImage('image/bomb.png')
 	_img_arrow = love.graphics.newImage('image/arrow.png')
-	_img_arrow2 = love.graphics.newImage('image/arrow2.png')
+	_img_2arrow = love.graphics.newImage('image/arrow2.png')
 	_img_bomb_ani = love.graphics.newImage('image/bomb_ani.png')
 	_img_icing_ani = love.graphics.newImage('image/icing_ani.png')
 
@@ -65,19 +65,21 @@ function render.init()
 	_quad_bomb = love.graphics.newQuad(0, 0, w, h, w, h)
 	w, h = _img_arrow:getDimensions()
 	_quad_arrow = love.graphics.newQuad(0, 0, w, h, w, h)
-	w, h = _img_arrow2:getDimensions()
-	_quad_arrow2 = love.graphics.newQuad(0, 0, w, h, w, h)
+	w, h = _img_2arrow:getDimensions()
+	_quad_2arrow = love.graphics.newQuad(0, 0, w, h, w, h)
 
 	_init_quads_bomb_ani()
 	_init_quads_icing_ani()
 end
 
-function render._draw_hex(img, quad, x, y, scale)
+function render._draw_hex(img, quad, x, y, scale, r)
 	scale = (scale or 1) * 0.4
+	r = (r or 0)
 	local qx, qy, qw, qh = quad:getViewport()
-	local offset_x = qw * scale / 2
-	local offset_y = qh * scale / 2
-	love.graphics.draw(img, quad, x - offset_x, y - offset_y, 0, scale, scale)
+	local ox = qw / 2
+	local oy = qh / 2
+	-- love.graphics.draw(img, quad, x, y, r, scale, scale, offset_x, offset_y)
+	love.graphics.draw(img, quad, x, y, r, scale, scale, ox, oy)
 end
 
 function render.draw_hex_slot(x, y, scale)
@@ -96,8 +98,8 @@ function render.draw_bomb(x, y, scale)
 	render._draw_hex(_img_bomb, _quad_bomb, x, y, scale)
 end
 
-function render.draw_arrow()
-	-- body
+function render.draw_2arrow(x, y, scale, rotato)
+	render._draw_hex(_img_2arrow, _quad_2arrow, x, y, scale, rotato)
 end
 
 function render.draw_hex_shadow(x, y, scale)
