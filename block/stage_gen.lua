@@ -85,11 +85,19 @@ local function gen_board_icing_and_bomb(board, hex_count)
 		hexagon.HEX_BOMB, 	math.ceil(hex_count / 8))
 end
 
+local function gen_board_arrow(board, hex_count)
+	gen_board_ex(board, hex_count,
+		hexagon.HEX_2ARROW1, math.ceil(hex_count / 9),
+		hexagon.HEX_2ARROW2, math.ceil(hex_count / 9),
+		hexagon.HEX_2ARROW3, math.ceil(hex_count / 9))
+end
+
 local BOARD_GEN_FUNS = {
 	[1]	= gen_board_color,
 	[2] = gen_board_icing,
 	[3] = gen_board_bomb,
 	[4] = gen_board_icing_and_bomb,
+	[5] = gen_board_arrow,
 }
 
 stage_gen = {}
@@ -192,7 +200,7 @@ function main()
 	local hex_count = 30
 	local block_count = 3
 	local gen_block_fun_id = 1
-	local gen_board_fun_id = 4
+	local gen_board_fun_id = 5
 
 	stage_gen.set_gen_board_fun(gen_board_fun_id)
 	stage_gen.set_gen_block_fun(gen_block_fun_id)
