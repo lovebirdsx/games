@@ -83,7 +83,7 @@ function unserialize(lua)
     local func = loadstring(lua)  
     if func == nil then  
         return nil  
-    end  
+    end
     return func()  
 end
 

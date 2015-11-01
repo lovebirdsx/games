@@ -3,6 +3,7 @@ require('misc')
 require('row_ani')
 require('icing_ani')
 require('bomb_ani')
+require('arrow_ani')
 
 board = {}
 
@@ -120,8 +121,19 @@ function board.create(s, x, y)
 				end
 			end
 			h.nearby_hex = nearby_hex
+		end)		
+	end
+
+	-- y = kx + b
+	-- b = y - kx
+	function self._init_kb_hex()
+		local all_k = {0, -2, 2}
+		self.foreach_hex(function (h)
+			for _, k in ipairs(all_k) do
+				local b = h.ry - k * h.rx
+				h.kb_hex[k] = self._kb_hex[k][b]
+			end
 		end)
-		
 	end
 
 	function self.init(s, x, y)
@@ -153,6 +165,7 @@ function board.create(s, x, y)
 		end
 
 		self._init_nearby_hex()
+		self._init_kb_hex()
 	end
 	
 	function self.gen_snapshot()
@@ -547,7 +560,11 @@ function board.create(s, x, y)
 				ani.on_bomb(function ()
 					hex.id = hexagon.HEX_SLOT					
 				end)
-				table.insert(self._lineup_ani_objs, ani)			
+				table.insert(self._lineup_ani_objs, ani)
+			elseif hexagon.HEX_2ARROW1 <= id and id <= hexagon.HEX_2ARROW3 then
+				local ani = arrow_ani.create(hex, self.max_line_count())
+				hex.id = hexagon.HEX_SLOT
+				table.insert(self._lineup_ani_objs, ani)
 			else
 				hex.id = hexagon.HEX_SLOT
 			end			
@@ -618,6 +635,10 @@ function board.create(s, x, y)
 	function self.random_2arrow()
 		local id = math.random(1, 3)
 		self._random_hex(hexagon.HEX_2ARROW1 - 1 + id)
+	end
+
+	function self.max_line_count()
+		return self._size * 2 - 1
 	end
 
 	self.init(s, x, y)

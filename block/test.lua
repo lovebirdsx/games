@@ -1,7 +1,6 @@
 require('block_mgr')
 require('board')
 require('hexagon')
-require('table_save')
 require('misc')
 
 function test_board()
@@ -56,6 +55,30 @@ function test_print()
 	end
 end
 
+function test_board_k()
+	local b = board.create()
+	for k, r in pairs(b._kb_hex) do
+		for b, hexs in pairs(r) do
+			printf('k = %g b = %g', k, b)
+		end
+	end
+end
+
+function test_board_hex_kb()
+	local b = board.create()
+	b.foreach_hex(function (h)
+		printf('%g %g:', h.rx, h.ry)
+		
+		for k, hexs in pairs(h.kb_hex) do
+			local strs = {}
+			for _, hex in ipairs(hexs) do
+				table.insert(strs, string.format('(%g,%g)', hex.rx, hex.ry))
+			end	
+			printf('\tk[%g] = %s', k, table.concat(strs, ' '))
+		end
+	end)
+end
+
 -- test_hexagon()
 -- test_board()
 -- test_table_save()
@@ -67,4 +90,6 @@ end
 -- printf('%02d', 1)
 -- test_print()
 
-print(unpack({1,2,3}))
+-- test_board_k()
+test_board_hex_kb()
+

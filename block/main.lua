@@ -1,6 +1,9 @@
 require('game')
 require('timer_mgr')
 
+-- display live console output in sublime text2
+io.stdout:setvbuf('no')
+
 function love.load()
 	love.window.setMode(900, 600)
 	love.window.setTitle('Hex')

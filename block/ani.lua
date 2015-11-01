@@ -7,7 +7,7 @@ local function create_quads(img, cell_x, cell_y)
 	for r = 1, cell_y do
 		for c = 1, cell_x do
 			local q = love.graphics.newQuad((c-1)*w, (r-1)*h, w, h, iw, ih)
-			quads[(r - 1) * 8 + c] = q			
+			quads[(r - 1) * cell_x + c] = q			
 		end
 	end
 	return quads
@@ -26,8 +26,9 @@ function ani.create(img_or_file, cell_x, cell_y, frame_rate)
 	local _ox = _img:getWidth() / cell_x / 2
 	local _oy = _img:getHeight() / cell_y / 2
 	local _interval = 1 / frame_rate
-	local _scale = 1
+	local _sx, _sy = 1, 1
 	local _x, _y = 0, 0
+	local _r = 0
 
 	function self.start()
 		_is_end = false
@@ -43,8 +44,12 @@ function ani.create(img_or_file, cell_x, cell_y, frame_rate)
 		_x, _y = x, y
 	end
 
-	function self.set_scale(scale)
-		_scale = scale
+	function self.set_scale(sx, sy)
+		_sx, _sy = sx, sy
+	end
+
+	function self.set_rotato(r)
+		_r = r
 	end
 
 	function self.update(dt)
@@ -64,8 +69,9 @@ function ani.create(img_or_file, cell_x, cell_y, frame_rate)
 
 	function self.draw()
 		if _is_end then return end
-		
-		love.graphics.draw(_img, _quads[_cell_id], _x, _y, 0, _scale, _scale, _ox, _oy)
+
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.draw(_img, _quads[_cell_id], _x, _y, _r, _sx, _sy, _ox, _oy)
 	end
 
 	function self.is_end()

@@ -43,6 +43,12 @@ local HEX_COLOR = {
 	[HEX_2ARROW3] = {207,243,129},
 }
 
+local ARROW_K = {
+	[HEX_2ARROW1] = 0,
+	[HEX_2ARROW2] = 2,
+	[HEX_2ARROW3] = -2,
+}
+
 function hexagon.create(rx, ry, id, scale, x, y)
 	local self = {
 		rx = rx,
@@ -53,6 +59,7 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		y = y or 0,
 		is_focus = false,
 		nearby_hex = nil,
+		kb_hex = {}
 	}
 
 	local _draw_funs
@@ -78,14 +85,8 @@ function hexagon.create(rx, ry, id, scale, x, y)
 	function self._draw_2arrow(rotato)
 		love.graphics.setColor(77, 77, 75)
 		render.draw_hex_slot(x, y, scale)
-		-- local c = HEX_COLOR[self.id]
-		-- love.graphics.setColor(c[1], c[2], c[3])
 		love.graphics.setColor(255, 255, 255)
 		render.draw_2arrow(self.x, self.y, self.scale, rotato)
-	end
-
-	function self._draw_2arrow1()
-		self._draw_2arrow(0)
 	end
 
 	function self._draw_2arrow1()
@@ -154,6 +155,7 @@ function hexagon.create(rx, ry, id, scale, x, y)
 
 	function self.can_line_up()
 		return (HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6)
+			or (HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3)
 			or self.id == HEX_BOMB
 	end
 
@@ -185,15 +187,27 @@ function hexagon.create(rx, ry, id, scale, x, y)
 				end
 			end
 		elseif self.id == HEX_BOMB then
-			result[#result + 1] = {hex = self, event='bomb_prepare'}			
+			result[#result + 1] = {hex = self, event='bomb_prepare'}
+		elseif HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3 then
+			result[#result + 1] = {hex = self, event='bomb_prepare'}		
 		end
 	end
 
 	function self._on_event_bomb_prepare(board, result)
-		self.id = HEX_SLOT
-		for i, h in ipairs(self.nearby_hex) do
-			if h.id ~= HEX_SLOT then
-				result[#result + 1] = {hex = h, event='bomb'}
+		if self.id == HEX_BOMB then
+			self.id = HEX_SLOT
+			for i, h in ipairs(self.nearby_hex) do
+				if h.id ~= HEX_SLOT then
+					result[#result + 1] = {hex = h, event='bomb'}
+				end
+			end
+		elseif HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3 then
+			local k = ARROW_K[self.id]
+			self.id = HEX_SLOT
+			for i, h in ipairs(self.kb_hex[k]) do
+				if h.id ~= HEX_SLOT then
+					result[#result + 1] = {hex = h, event='bomb'}
+				end
 			end
 		end
 	end
@@ -209,9 +223,28 @@ function hexagon.create(rx, ry, id, scale, x, y)
 			self.id = HEX_SLOT
 		elseif self.id == HEX_BOMB then
 			result[#result + 1] = {hex = self, event='bomb_prepare'}
+		elseif HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3 then
+			result[#result + 1] = {hex = self, event='bomb_prepare'}
 		elseif self.id == HEX_ICING then
 			self.id = HEX_SLOT
 		end
+	end
+
+	function self.get_kb_center()
+		assert(HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3)
+		local hexs = self.kb_hex[ARROW_K[self.id]]
+		local tx, ty = 0, 0
+		for _, h in ipairs(hexs) do
+			tx = tx + h.x
+			ty = ty + h.y
+		end
+		return tx / #hexs, ty / #hexs
+	end
+
+	function self.get_kb_count()
+		assert(HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3)
+		local hexs = self.kb_hex[ARROW_K[self.id]]
+		return #hexs
 	end
 	
 	return self
