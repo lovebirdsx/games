@@ -518,11 +518,6 @@ function board.create(s, x, y)
 	function self.start_lineup_ani(end_cb)
 		local rows = self.get_lineup_rows()
 		local result = self.lineup()
-		for depth, r in ipairs(result) do
-			for h, id in pairs(r) do				
-				printf('type=%d pos=(%d,%d) depth=%d', id, h.rx, h.ry, depth)
-			end			
-		end
 		self.undo_lineup(result)
 
 		self._lineup_max_depth = #result
@@ -564,7 +559,9 @@ function board.create(s, x, y)
 				table.insert(self._lineup_ani_objs, ani)
 			elseif hexagon.HEX_2ARROW1 <= id and id <= hexagon.HEX_2ARROW3 then
 				local ani = arrow_ani.create(hex, self.max_line_count())
-				hex.id = hexagon.HEX_SLOT
+				ani.on_end(function ()
+					hex.id = hexagon.HEX_SLOT
+				end)
 				table.insert(self._lineup_ani_objs, ani)
 			elseif hexagon.HEX_COLOR1_ROPE <= id and id <= hexagon.HEX_COLOR6_ROPE then
 				local ani = rope_ani.create(hex)

@@ -299,6 +299,19 @@ local _key_routines = {
 			_board.random_rope()
 		end
 	end,
+	[' '] = function ()
+		if _game_over or _stage_clear or _stage_failed then
+			if not _stage_mode then
+				game.restart()
+			else
+				if _stage_failed then
+					game.restart_stage()
+				else
+					game.load_next_stage()
+				end
+			end
+		end		
+	end
 }
 
 function love.keypressed(key)
