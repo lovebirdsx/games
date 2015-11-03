@@ -92,12 +92,42 @@ local function gen_board_arrow(board, hex_count)
 		hexagon.HEX_2ARROW3, math.ceil(hex_count / 9))
 end
 
+local function gen_board_all(board, hex_total)
+	local hexs = {}
+	board.foreach_hex(function (h)
+		h.id = 0
+		table.insert(hexs, h)
+	end)
+
+	-- remove empty hex
+	local cut_off = board.hex_count() - hex_total
+	local i = 0
+	while i < cut_off do
+		local c = math.random(3, 5)
+		i = i + c
+		if i > cut_off then
+			c = c - (i - cut_off)
+			i = cut_off
+		end
+		local start = math.random(1, #hexs - c)
+		for j = 1, c do
+			table.remove(hexs, start)
+		end
+	end
+
+	-- set for color hex types
+	for _, h in ipairs(hexs) do
+		h.id = math.random(1, hexagon.max_hex)
+	end
+end
+
 local BOARD_GEN_FUNS = {
 	[1]	= gen_board_color,
 	[2] = gen_board_icing,
 	[3] = gen_board_bomb,
 	[4] = gen_board_icing_and_bomb,
 	[5] = gen_board_arrow,
+	[6] = gen_board_all,
 }
 
 stage_gen = {}
@@ -193,14 +223,13 @@ function stage_gen.remove_left_hex_depth(board, m, depth)
 	return r
 end
 
-require('lfs')
 function main()
 	local RAND_MAX = 32767
 	local board = board.create()
 	local hex_count = 30
 	local block_count = 3
 	local gen_block_fun_id = 1
-	local gen_board_fun_id = 5
+	local gen_board_fun_id = 6
 
 	stage_gen.set_gen_board_fun(gen_board_fun_id)
 	stage_gen.set_gen_block_fun(gen_block_fun_id)

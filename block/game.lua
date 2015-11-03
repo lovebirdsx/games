@@ -104,16 +104,16 @@ function game.load()
 	end
 end
 
-function game.load_prev_stage()
+function game.load_prev_stage(count)
 	if _stage_mode then
-		stage_mgr.move_to_prev_stage()
+		stage_mgr.move_to_prev_stage(count)
 		game.load_stage()
 	end
 end
 
-function game.load_next_stage()
+function game.load_next_stage(count)
 	if _stage_mode then		
-		stage_mgr.move_to_next_stage()
+		stage_mgr.move_to_next_stage(count)
 		game.load_stage()
 	end
 end
@@ -228,11 +228,23 @@ local _key_routines = {
 		end
 	end,	
 	['left'] = function ()
-		game.load_prev_stage()
+		local count = 1
+		if love.keyboard.isDown('lctrl') then
+			count = 10
+		elseif love.keyboard.isDown('lalt') then
+			count = 100
+		end
+		game.load_prev_stage(count)
 	end,
 
 	['right'] = function ()		
-		game.load_next_stage()
+		local count = 1
+		if love.keyboard.isDown('lctrl') then
+			count = 10
+		elseif love.keyboard.isDown('lalt') then
+			count = 100
+		end
+		game.load_next_stage(count)
 	end,
 	['g'] = function ()
 		if _develop and _turn_finish then
@@ -280,6 +292,11 @@ local _key_routines = {
 	['n'] = function ()
 		if not _stage_mode then
 			_board.random_2arrow()
+		end
+	end,
+	['o'] = function ()
+		if not _stage_mode then
+			_board.random_rope()
 		end
 	end,
 }

@@ -1,6 +1,18 @@
 require('render')
 require('misc')
 
+-- how to add new hex type
+-- 	- add declare
+--	- modify hexagon.max_hex
+--	- add TYPE in LINEUP_IDS if needed
+--	- add draw fun
+--	- add draw fun in render.lua
+--	- add gen fun in board.lua
+--	- map key to gen fun in game.lua
+-- 	- add clear respone in board._start_next_line_up_ani()
+--	- add new board gen type in stage_gen.lua
+--	- add ani if need
+
 -- seq can not be changed
 local HEX_SLOT = 0
 local HEX_COLOR1 = 1
@@ -14,8 +26,14 @@ local HEX_BOMB = 8
 local HEX_2ARROW1 = 9
 local HEX_2ARROW2 = 10
 local HEX_2ARROW3 = 11
+local HEX_COLOR1_ROPE = 12
+local HEX_COLOR2_ROPE = 13
+local HEX_COLOR3_ROPE = 14
+local HEX_COLOR4_ROPE = 15
+local HEX_COLOR5_ROPE = 16
+local HEX_COLOR6_ROPE = 17
 
-hexagon = {w = 59, h = 50, max_color = 6,
+hexagon = {w = 59, h = 50, max_color = 6, max_hex = HEX_COLOR6_ROPE,
 	HEX_SLOT = HEX_SLOT,
 	HEX_COLOR1 = HEX_COLOR1,
 	HEX_COLOR2 = HEX_COLOR2,
@@ -28,6 +46,12 @@ hexagon = {w = 59, h = 50, max_color = 6,
 	HEX_2ARROW1 = HEX_2ARROW1,
 	HEX_2ARROW2 = HEX_2ARROW2,
 	HEX_2ARROW3 = HEX_2ARROW3,
+	HEX_COLOR1_ROPE = HEX_COLOR1_ROPE,
+	HEX_COLOR2_ROPE = HEX_COLOR2_ROPE,
+	HEX_COLOR3_ROPE = HEX_COLOR3_ROPE,
+	HEX_COLOR4_ROPE = HEX_COLOR4_ROPE,
+	HEX_COLOR5_ROPE = HEX_COLOR5_ROPE,
+	HEX_COLOR6_ROPE = HEX_COLOR6_ROPE,
 }
 
 local HEX_COLOR = {
@@ -47,6 +71,25 @@ local ARROW_K = {
 	[HEX_2ARROW1] = 0,
 	[HEX_2ARROW2] = 2,
 	[HEX_2ARROW3] = -2,
+}
+
+local LINEUP_IDS = {
+	[HEX_COLOR1] = true,
+	[HEX_COLOR2] = true,
+	[HEX_COLOR3] = true,
+	[HEX_COLOR4] = true,
+	[HEX_COLOR5] = true,
+	[HEX_COLOR6] = true,
+	[HEX_BOMB] = true,
+	[HEX_2ARROW1] = true,
+	[HEX_2ARROW2] = true,
+	[HEX_2ARROW3] = true,
+	[HEX_COLOR1_ROPE] = true,
+	[HEX_COLOR2_ROPE] = true,
+	[HEX_COLOR3_ROPE] = true,
+	[HEX_COLOR4_ROPE] = true,
+	[HEX_COLOR5_ROPE] = true,
+	[HEX_COLOR6_ROPE] = true,
 }
 
 function hexagon.create(rx, ry, id, scale, x, y)
@@ -101,6 +144,12 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		self._draw_2arrow(math.pi / 360 * 240)
 	end
 
+	function self._draw_hex_rope()
+		local color_id = self.id - HEX_COLOR1_ROPE + HEX_COLOR1
+		self.draw_c(HEX_COLOR[color_id], 255)
+		render.draw_rope(self.x, self.y, self.scale)
+	end
+
 	_draw_funs = {
 		[HEX_SLOT] = self._draw_hex_color,
 		[HEX_COLOR1] = self._draw_hex_color,
@@ -114,6 +163,12 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		[HEX_2ARROW1] = self._draw_2arrow1,
 		[HEX_2ARROW2] = self._draw_2arrow2,
 		[HEX_2ARROW3] = self._draw_2arrow3,
+		[HEX_COLOR1_ROPE] = self._draw_hex_rope,
+		[HEX_COLOR2_ROPE] = self._draw_hex_rope,
+		[HEX_COLOR3_ROPE] = self._draw_hex_rope,
+		[HEX_COLOR4_ROPE] = self._draw_hex_rope,
+		[HEX_COLOR5_ROPE] = self._draw_hex_rope,
+		[HEX_COLOR6_ROPE] = self._draw_hex_rope,
 	}
 
 	function self.draw(shadow)
@@ -154,9 +209,7 @@ function hexagon.create(rx, ry, id, scale, x, y)
 	end
 
 	function self.can_line_up()
-		return (HEX_COLOR1 <= self.id and self.id <= HEX_COLOR6)
-			or (HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3)
-			or self.id == HEX_BOMB
+		return LINEUP_IDS[self.id] and true or false
 	end
 
 	-- param
@@ -172,9 +225,7 @@ function hexagon.create(rx, ry, id, scale, x, y)
 	--		 ...
 	--		}	
 	function self.on_event(board, event, result)
-
 		self['_on_event_' .. event](board, result)
-
 		return result
 	end
 
@@ -189,7 +240,9 @@ function hexagon.create(rx, ry, id, scale, x, y)
 		elseif self.id == HEX_BOMB then
 			result[#result + 1] = {hex = self, event='bomb_prepare'}
 		elseif HEX_2ARROW1 <= self.id and self.id <= HEX_2ARROW3 then
-			result[#result + 1] = {hex = self, event='bomb_prepare'}		
+			result[#result + 1] = {hex = self, event='bomb_prepare'}
+		elseif HEX_COLOR1_ROPE <= self.id and self.id <= HEX_COLOR6_ROPE then
+			self.id = self.id - HEX_COLOR1_ROPE + HEX_COLOR1			
 		end
 	end
 

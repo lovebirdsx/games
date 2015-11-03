@@ -4,6 +4,7 @@ require('row_ani')
 require('icing_ani')
 require('bomb_ani')
 require('arrow_ani')
+require('rope_ani')
 
 board = {}
 
@@ -565,6 +566,10 @@ function board.create(s, x, y)
 				local ani = arrow_ani.create(hex, self.max_line_count())
 				hex.id = hexagon.HEX_SLOT
 				table.insert(self._lineup_ani_objs, ani)
+			elseif hexagon.HEX_COLOR1_ROPE <= id and id <= hexagon.HEX_COLOR6_ROPE then
+				local ani = rope_ani.create(hex)
+				table.insert(self._lineup_ani_objs, ani)
+				hex.id = id - hexagon.HEX_COLOR1_ROPE + hexagon.HEX_COLOR1
 			else
 				hex.id = hexagon.HEX_SLOT
 			end			
@@ -633,8 +638,13 @@ function board.create(s, x, y)
 	end
 
 	function self.random_2arrow()
-		local id = math.random(1, 3)
-		self._random_hex(hexagon.HEX_2ARROW1 - 1 + id)
+		local id = math.random(hexagon.HEX_2ARROW1, hexagon.HEX_2ARROW3)
+		self._random_hex(id)
+	end
+
+	function self.random_rope()		
+		local id = math.random(hexagon.HEX_COLOR1_ROPE, hexagon.HEX_COLOR6_ROPE)
+		self._random_hex(id)
 	end
 
 	function self.max_line_count()

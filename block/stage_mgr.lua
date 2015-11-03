@@ -59,15 +59,17 @@ function stage_mgr.stage_file()
 	return _stage_files[_stage_id]
 end
 
-function stage_mgr.move_to_prev_stage()
-	_stage_id = _stage_id - 1
+function stage_mgr.move_to_prev_stage(count)
+	count = count or 1
+	_stage_id = _stage_id - count
 	if _stage_id < 1 then
 		_stage_id = #_stage_files
 	end	
 end
 
-function stage_mgr.move_to_next_stage()
-	_stage_id = _stage_id + 1
+function stage_mgr.move_to_next_stage(count)
+	count = count or 1
+	_stage_id = _stage_id + count
 	if _stage_id > #_stage_files then
 		_stage_id = 1
 	end

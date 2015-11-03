@@ -5,8 +5,10 @@ local _img_shadow
 local _img_icing
 local _img_bomb
 local _img_2arrow
+local _img_rope
 local _img_bomb_ani
 local _img_icing_ani
+local _img_rope_ani
 local _img_lightning
 local _quad_hex_left
 local _quad_hex_right
@@ -14,6 +16,7 @@ local _quad_shadow
 local _quad_icing
 local _quad_bomb
 local _quad_2arrow
+local _quad_rope
 local _quads_bomb_ani
 local _quads_icing_ani
 
@@ -49,8 +52,10 @@ function render.init()
 	_img_icing = love.graphics.newImage('image/icing.png')
 	_img_bomb = love.graphics.newImage('image/bomb.png')
 	_img_2arrow = love.graphics.newImage('image/arrow2.png')
+	_img_rope = love.graphics.newImage('image/rope.png')
 	_img_bomb_ani = love.graphics.newImage('image/bomb_ani.png')
 	_img_icing_ani = love.graphics.newImage('image/icing_ani.png')
+	_img_rope_ani = love.graphics.newImage('image/rope_ani.png')
 	_img_lightning = love.graphics.newImage('image/lightning.png')
 
 	local sw, sh = _img_hex:getDimensions()
@@ -64,14 +69,23 @@ function render.init()
 	_quad_bomb = love.graphics.newQuad(0, 0, w, h, w, h)
 	w, h = _img_2arrow:getDimensions()
 	_quad_2arrow = love.graphics.newQuad(0, 0, w, h, w, h)
+	w, h = _img_rope:getDimensions()
+	_quad_rope = love.graphics.newQuad(0, 0, w, h, w, h)
 
 	_init_quads_bomb_ani()
 	_init_quads_icing_ani()
 end
 
+local _img_map
+
 function render.get_img(name)
-	if name == 'lightning' then return _img_lightning end
-	assert(false)
+	if not _img_map then
+		_img_map = {
+			lightning = _img_lightning,
+			rope_ani = _img_rope_ani,
+		}
+	end
+	return _img_map[name]
 end
 
 function render._draw_hex(img, quad, x, y, scale, r)
@@ -98,6 +112,10 @@ end
 
 function render.draw_bomb(x, y, scale)
 	render._draw_hex(_img_bomb, _quad_bomb, x, y, scale)
+end
+
+function render.draw_rope(x, y, scale)
+	render._draw_hex(_img_rope, _quad_rope, x, y, scale)
 end
 
 function render.draw_2arrow(x, y, scale, rotato)
