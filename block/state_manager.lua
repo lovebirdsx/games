@@ -18,33 +18,13 @@ function State:draw()
 	
 end
 
-function State:mousepressed(x, y, button)
-
-end
-
-function State:mousemoved(x, y, dx, dy)
-
-end
-
-function State:mousereleased(x, y, button)
-
-end
-
-function State:keypressed(key)
-	
-end
-
 StateManager = class()
 
 local _sm
 
 function StateManager:instance()
-	if not _sm then _sm = StateManager:new() end
+	if not _sm then _sm = StateManager() end
 	return _sm
-end
-
-function StateManager:init()
-	
 end
 
 function StateManager:start(state)
@@ -68,20 +48,4 @@ function StateManager:change_state(State)
 	self.state:exit()
 	self.state = State
 	self.state:enter()
-end
-
-function StateManager:mousepressed(x, y, button)
-	self.state:mousepressed(x, y, button)
-end
-
-function StateManager:mousemoved(x, y, dx, dy)
-	self.state:mousemoved(x, y, dx, dy)
-end
-
-function StateManager:mousereleased(x, y, button)
-	self.state:mousereleased(x, y, button)
-end
-
-function StateManager:keypressed(key)
-	self.state:keypressed(key)
 end

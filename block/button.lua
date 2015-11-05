@@ -1,20 +1,22 @@
-require 'class'
+require('event_dispatcher')
+require('class')
+require('font')
 
-Button = class()
-
-function Button:init(text, x, y, width, height)
-   self.text = text
-   self.x = x
-   self.y = y
-   self.width = width
-   self.height = height
-   self.visible = true
-   self.color = {
-      normal  = { 200, 200, 200 },
-      hover   = { 255, 255,   0 },
-      pressed = { 200, 200,   0 },
-   }   
-end
+Button = class(
+   function (self, text, x, y, width, height)
+      self.text = text
+      self.x = x
+      self.y = y
+      self.width = width
+      self.height = height
+      self.visible = true
+      self.color = {
+         normal  = { 200, 200, 200 },
+         hover   = { 255, 255,   0 },
+         pressed = { 200, 200,   0 },
+      }
+   end
+)
 
 function Button:mousemoved(x, y)
    self.hover = self:test_point(x, y)
@@ -53,36 +55,50 @@ function Button:draw()
               or self.color.normal
    local pop = self.pressed and 1 or 0
    love.graphics.setColor(0, 0, 0)
-   love.graphics.printf(self.text, self.x + 2, self.y + 2, self.width + pop, 'center')
+   font.print('hurge', self.text, self.x + 2, self.y + 2)
    love.graphics.setColor(unpack(color))
-   love.graphics.printf(self.text, self.x + pop, self.y + pop, self.width + pop, 'center')
+   font.print('hurge', self.text, self.x + pop, self.y + pop)
 end
 
-Buttons = class()
-
-function Buttons:init()
+Buttons = class(function (self)
    self.buttons = {}
+   local ed = EventDispatcher:instance()
+   ed:add('mousemoved', self, self.mousemoved)
+   ed:add('mousepressed', self, self.mousepressed)
+   ed:add('mousereleased', self, self.mousereleased)
+end)
+
+-- must called manally when buttons no need any more
+function Buttons:release()
+   local ed = EventDispatcher:instance()
+   ed:remove('mousemoved', self, self.mousemoved)
+   ed:remove('mousepressed', self, self.mousepressed)
+   ed:remove('mousereleased', self, self.mousereleased)
 end
 
 function Buttons:add(button)
    self.buttons[#self.buttons + 1] = button
 end
 
-function Buttons:mousemoved(x, y)
+function Buttons:mousemoved(x, y, dx, dy)
    for i,button in ipairs(self.buttons) do
       button:mousemoved(x, y)
    end
 end
 
-function Buttons:mousereleased(x, y)
-   for i,button in ipairs(self.buttons) do
-      button:mousereleased(x, y)
+function Buttons:mousereleased(x, y, button)
+   if button == 'l' then
+      for i,button in ipairs(self.buttons) do
+         button:mousereleased(x, y)
+      end
    end
 end
 
-function Buttons:mousepressed(x, y)
-   for i,button in ipairs(self.buttons) do
-      button:mousepressed(x, y)
+function Buttons:mousepressed(x, y, button)
+   if button == 'l' then
+      for i,button in ipairs(self.buttons) do
+         button:mousepressed(x, y)
+      end
    end
 end
 

@@ -12,17 +12,13 @@ require('timer')
 require('stage')
 require('misc')
 require('stage_mgr')
+require('event_dispatcher')
 
 local SAVE_FILE = 'save.dat'
 local VERSION = '1.1'
 
-Game = class(State)
-
-function Game:init(b)
-	self._board = b or board.create()	
-end
-
-function Game:enter(board)
+Game = class(State, function (self, b)
+	self._board = b or board.create()
 	self._selected_block = nil
 	self._block_dx = 0
 	self._block_dy = 0
@@ -50,9 +46,23 @@ function Game:enter(board)
 
 	love.audio.setVolume(self._volume)
 	sound.play('music')
+end)
+
+function Game:enter(board)
+	local ed = EventDispatcher:instance()
+	ed:add('mousepressed', self, self.mousepressed)
+	ed:add('mousemoved', self, self.mousemoved)
+	ed:add('mousereleased', self, self.mousereleased)
+	ed:add('keypressed', self, self.keypressed)
 end
 
 function Game:exit()
+	local ed = EventDispatcher:instance()
+	ed:remove('mousepressed', self, self.mousepressed)
+	ed:remove('mousemoved', self, self.mousemoved)
+	ed:remove('mousereleased', self, self.mousereleased)
+	ed:remove('keypressed', self, self.keypressed)
+
 	sound.stop('music')
 	self:save()
 end
@@ -221,9 +231,6 @@ local _key_routines = {
 			Game:load_stage()
 		end
 	end,
-	['escape'] = function (self)
-		love.event.quit()
-	end,
 	['t'] = function (self)
 		self._stage_mode = not self._stage_mode
 		if self._stage_mode then
@@ -323,7 +330,6 @@ local _key_routines = {
 }
 
 function Game:keypressed(key)
-	printf('key [%s] pressed', key)
 	local f = _key_routines[key]
 	if f then f(self) end
 end
@@ -417,7 +423,7 @@ end
 
 function Game:move_block(x, y)
 	if self._selected_block then
-		self._selected_block.set_pos(x - _block_dx, y - _block_dy)
+		self._selected_block.set_pos(x - self._block_dx, y - self._block_dy)
 		self._board.unfocus()
 		if self._board.can_locate(self._selected_block) then
 			self._board.focus(self._selected_block)
@@ -452,11 +458,11 @@ end
 function Game:add_score_ani(score, rx, ry)
 	local h = self._board.get_hex(rx, ry)
 	local ani = text_effect.create('+' .. score, h.x, h.y - 100)
-	table.insert(_score_ani, ani)
+	table.insert(self._score_ani, ani)
 	ani.on_end(function ()
-		for i, a in ipairs(_score_ani) do
+		for i, a in ipairs(self._score_ani) do
 			if a == ani then
-				table.remove(_score_ani, i)
+				table.remove(self._score_ani, i)
 				return
 			end
 		end
@@ -497,7 +503,7 @@ function Game:locate(b, rx, ry)
 				sound.play_tier(#result - 1)
 			end
 			local current_s = score.line_up_score(result)
-			self._score = self._score + self.current_s
+			self._score = self._score + current_s
 			self:add_score_ani(current_s, rx, ry)
 			if not self._stage_mode then
 				block_mgr.refill()

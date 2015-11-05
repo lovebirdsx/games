@@ -4,66 +4,6 @@
 		"selected_items":
 		[
 			[
-				"mouse",
-				"mousereleased"
-			],
-			[
-				"key",
-				"keypressed	(state_manager.lua)"
-			],
-			[
-				"Chap",
-				"ChapterSelect"
-			],
-			[
-				"StageS",
-				"StageSelect	(stage_select.lua)"
-			],
-			[
-				"Stage",
-				"StateManager:instance	(main.lua)"
-			],
-			[
-				"DR",
-				"DRAW_Y"
-			],
-			[
-				"cel",
-				"ceil	(stage_gen.lua)"
-			],
-			[
-				"butto",
-				"buttons"
-			],
-			[
-				"Butto",
-				"Buttons	(button.lua)"
-			],
-			[
-				"bu",
-				"button	(button.lua)"
-			],
-			[
-				"stage",
-				"stage_selector	(stage_selector.lua)"
-			],
-			[
-				"stateman",
-				"state_manager	(main.lua)"
-			],
-			[
-				"stag",
-				"stage_manager"
-			],
-			[
-				"set_po",
-				"set_pos_and_scale	(board.lua)"
-			],
-			[
-				"_bar",
-				"_board"
-			],
-			[
 				"ke",
 				"love.keyboard.isDown"
 			],
@@ -278,6 +218,10 @@
 			[
 				"rad",
 				"randomseed	(test.lua)"
+			],
+			[
+				"stage",
+				"stage_mgr"
 			],
 			[
 				"_sge",
@@ -514,65 +458,73 @@
 			[
 				"g_im",
 				"g_img_blocks"
+			],
+			[
+				"CAMP_EN",
+				"CAMP_ENEMY2"
+			],
+			[
+				"get_all",
+				"get_all_units	(common.lua)"
+			],
+			[
+				"show_ba",
+				"show_battle_objective"
+			],
+			[
+				"gen_en",
+				"gen_enemies	(swamp1_chaos_kill.lua)"
+			],
+			[
+				"RA",
+				"RADIUS"
+			],
+			[
+				"check",
+				"check_pos"
+			],
+			[
+				"add_wai",
+				"add_warning_circle_ex	(common.lua)"
+			],
+			[
+				"dis",
+				"distance2	(common.lua)"
+			],
+			[
+				"set_god",
+				"set_god_move	(api.lua)"
+			],
+			[
+				"esca",
+				"escape	(api.lua)"
+			],
+			[
+				"gobl",
+				"goblin"
+			],
+			[
+				"sp",
+				"set_player_hero_sp	(common.lua)"
+			],
+			[
+				"game",
+				"g_game_over"
+			],
+			[
+				"CAMP_ENEMY",
+				"CAMP_ENEMY2"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "chapter_select.lua",
+			"file": "/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 			"settings":
 			{
-				"buffer_size": 1453,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "state_manager.lua",
-			"settings":
-			{
-				"buffer_size": 1240,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "button.lua",
-			"settings":
-			{
-				"buffer_size": 2009,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "main.lua",
-			"settings":
-			{
-				"buffer_size": 998,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "misc.lua",
-			"settings":
-			{
-				"buffer_size": 3328,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "stage.lua",
-			"settings":
-			{
-				"buffer_size": 1129,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "stage_gen.lua",
-			"settings":
-			{
-				"buffer_size": 5697,
-				"line_ending": "Windows"
+				"buffer_size": 13697,
+				"line_ending": "Unix"
 			}
 		},
 		{
@@ -584,10 +536,18 @@
 			}
 		},
 		{
-			"file": "stage_select.lua",
+			"file": "game.lua",
 			"settings":
 			{
-				"buffer_size": 489,
+				"buffer_size": 11747,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "rope_ani.lua",
+			"settings":
+			{
+				"buffer_size": 247,
 				"line_ending": "Windows"
 			}
 		},
@@ -600,50 +560,34 @@
 			}
 		},
 		{
-			"file": "game.lua",
+			"file": "stage_gen.lua",
 			"settings":
 			{
-				"buffer_size": 12662,
+				"buffer_size": 5697,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "text_effect.lua",
+			"file": "stage.lua",
 			"settings":
 			{
-				"buffer_size": 567,
+				"buffer_size": 1129,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "test.lua",
+			"file": "main.lua",
 			"settings":
 			{
-				"buffer_size": 1922,
+				"buffer_size": 421,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "class.lua",
+			"file": "misc.lua",
 			"settings":
 			{
-				"buffer_size": 1440,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "hexagon.lua",
-			"settings":
-			{
-				"buffer_size": 7725,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "rope_ani.lua",
-			"settings":
-			{
-				"buffer_size": 247,
+				"buffer_size": 2896,
 				"line_ending": "Windows"
 			}
 		},
@@ -693,6 +637,14 @@
 			{
 				"buffer_size": 1307,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hexagon.lua",
+			"settings":
+			{
+				"buffer_size": 7680,
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -758,17 +710,33 @@
 				"buffer_size": 1475,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "test.lua",
+			"settings":
+			{
+				"buffer_size": 1742,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "text_effect.lua",
+			"settings":
+			{
+				"buffer_size": 567,
+				"line_ending": "Windows"
+			}
 		}
 	],
-	"build_system": "Packages/Lua Love/LuaLove.sublime-build",
+	"build_system": "Packages/User/test.sublime-build",
 	"command_palette":
 	{
-		"height": 81.0,
+		"height": 392.0,
 		"selected_items":
 		[
 			[
-				"stsylua",
-				"Set Syntax: Lua"
+				"sor",
+				"Sort Tabs: Menu"
 			],
 			[
 				"install",
@@ -835,7 +803,7 @@
 				"Preferences: Key Bindings - Default"
 			]
 		],
-		"width": 400.0
+		"width": 449.0
 	},
 	"console":
 	{
@@ -852,21 +820,10 @@
 	},
 	"file_history":
 	[
-		"/E/git_project/games/particleedit/main.lua",
-		"/E/git_project/games/particleedit/button.lua",
-		"/E/git_project/games/block/stage_select.lua",
-		"/E/git_project/games/block/stage_selector.lua",
-		"/E/git_project/games/block/stages/[1-1][30-3][3143]",
-		"/E/git_project/games/particleedit/settings.lua",
-		"/E/git_project/games/particleedit/selector.lua",
-		"/C/Users/ejoy/AppData/Roaming/Sublime Text 2/Packages/Lua Love/Lua/global-require.sublime-snippet",
-		"/C/Users/ejoy/AppData/Roaming/Sublime Text 2/Packages/Lua Love/Lua/local-require.sublime-snippet",
-		"/C/Users/ejoy/AppData/Roaming/Sublime Text 2/Packages/Lua Love/Lua/_G.sublime-snippet",
-		"/E/git_project/games/block/stage_manager.lua",
-		"/E/git_project/games/particleedit/particles.lua",
-		"/E/git_project/games/particleedit/util.lua",
-		"/E/git_project/games/particleedit/toolbar.lua",
-		"/E/git_project/games/particleedit/class.lua",
+		"/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Default/Default (Windows).sublime-keymap",
+		"/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Lua Love/LuaLove.sublime-settings",
 		"/E/git_project/games/block/explotion.lua",
 		"/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/User/test.sublime-build",
 		"/C/Users/ejoy/AppData/Roaming/Sublime Text 2/Packages/User/love2d_mine.sublime-build",
@@ -979,7 +936,18 @@
 		"/E/git_project/lr_common/tools/designd/hot_update/scene/scene_test.misc.json",
 		"/E/git_project/lr_common/tools/designd/hot_update/scene/scene_test.json",
 		"/E/git_project/lr_common/sproto/makefile",
-		"/E/git_project/lr_common/design/scene_script/random/main.lua"
+		"/E/git_project/lr_common/design/scene_script/random/main.lua",
+		"/C/Users/ejoy/.ssh/id_rsa.pub",
+		"/C/Users/ejoy/.ssh/config",
+		"/E/svn_project/mp/LR/design/D地图文件/stacktrace.txt",
+		"/C/Users/ejoy/.ssh/id_rsa_2.pub",
+		"/C/Users/ejoy/.ssh/id_rsa_2",
+		"/C/Users/ejoy/.ssh/id_rsa",
+		"/C/Users/ejoy/AppData/Roaming/Sublime Text 2/Packages/Lua/lr-gen_units.sublime-snippet",
+		"/E/svn_project/mp/LR/design/D地图文件/roles/栅栏_东北_complex_shape.json",
+		"/E/svn_project/mp/LR/design/D地图文件/roles/栅栏_东南_complex_shape.json",
+		"/E/svn_project/mp/LR/design/D地图文件/roles/栅栏_北_complex_shape.json",
+		"/E/svn_project/mp/LR/design/D地图文件/roles/栅栏_东_complex_shape.json"
 	],
 	"find":
 	{
@@ -1001,55 +969,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"onmousedown",
-			"onmouseup",
-			"onmousemove",
-			"game:",
-			"game",
-			"self.State",
-			"State",
-			"State_manager",
-			"state",
-			"BUTTON_HEIGHT",
-			"BUTTON_WIDTH",
-			"sm",
-			"love",
-			"stage_select",
-			"chapter_select",
-			"self",
-			"buttons",
-			"button",
-			"Button",
-			"mousey",
-			"mousex",
-			"onmousemove",
-			"update",
-			"pointInButton",
-			"onMouseUp",
-			"onMouseDown",
-			"dirs",
-			"path",
-			"stage_select",
-			"chapters",
-			"path",
-			"chapters",
-			"stage_selector",
-			"list_filepath",
-			"state_selector",
-			"_backup_dir",
-			"_board",
-			"stage_manager",
-			"function",
-			"state",
-			"save",
-			"game",
-			"_selected_block",
-			"game",
-			"function",
-			"game",
-			"game.",
-			"stage_manager",
-			"hexagon.create",
+			"ctrl+n",
+			"#",
+			"ctrl+p",
 			"load_prev_stage",
 			"IMG_MAP",
 			"arrow_ani",
@@ -1128,7 +1050,53 @@
 			"scan_files",
 			"load_stage",
 			"_stage_file",
-			"game.load_stage"
+			"game.load_stage",
+			"load_stage",
+			"game.load_stag",
+			"load_stage",
+			"BACKUP_DIR",
+			"stage_selector",
+			"\"",
+			"file",
+			"_stage_file",
+			"blocks",
+			"_stage_mode",
+			"game.render",
+			"Dir",
+			"dir",
+			"load_stage",
+			"stage_file",
+			"list_file_inner",
+			"list_files",
+			"load_stage",
+			"lfs",
+			"depth",
+			"remove_left_hex",
+			"board",
+			"remove_left_hex",
+			"is_ok",
+			"can_locate_any_block",
+			"locate",
+			"blocks",
+			"update",
+			"block_mgr",
+			"b0",
+			"b",
+			"board",
+			"bids",
+			"locate",
+			"locate_block",
+			"game.locate",
+			"max_score",
+			"cutt_off",
+			"hex_count",
+			"best_socre",
+			"print",
+			"board",
+			"avarage_search_count",
+			"AVARAGE_SEARCH_COUNT",
+			"avarage_search_count",
+			"block_cout"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1158,172 +1126,114 @@
 			[
 				{
 					"buffer": 0,
-					"file": "chapter_select.lua",
+					"file": "/Users/lovebird/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 					"settings":
 					{
-						"buffer_size": 1453,
+						"buffer_size": 13697,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								958,
-								958
+								293,
+								293
 							]
 						],
 						"settings":
 						{
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720740.83,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"sorttabs_lastactivated": 1446736337.91,
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 108.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "state_manager.lua",
+					"file": "board.lua",
 					"settings":
 					{
-						"buffer_size": 1240,
+						"buffer_size": 14415,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								732,
-								732
+								9817,
+								9817
 							]
 						],
 						"settings":
 						{
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720720.65,
+							"sorttabs_lastactivated": 1446736287.79,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 594.0,
+						"translation.y": 7825.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "button.lua",
+					"file": "game.lua",
 					"settings":
 					{
-						"buffer_size": 2009,
+						"buffer_size": 11747,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1823,
-								1823
+								5742,
+								5742
 							]
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720660.37,
+							"sorttabs_lastactivated": 1446571202.69,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 810.0,
+						"translation.y": 4657.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "main.lua",
+					"file": "rope_ani.lua",
 					"settings":
 					{
-						"buffer_size": 998,
+						"buffer_size": 247,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								974,
-								974
+								83,
+								83
 							]
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720446.87,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 768.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "misc.lua",
-					"settings":
-					{
-						"buffer_size": 3328,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								711,
-								711
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720446.5,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 36.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "stage.lua",
-					"settings":
-					{
-						"buffer_size": 1129,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720446.03,
+							"sorttabs_lastactivated": 1446565138.5,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1334,7 +1244,37 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 4,
+					"file": "stage_mgr.lua",
+					"settings":
+					{
+						"buffer_size": 1869,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1513,
+								1513
+							]
+						],
+						"settings":
+						{
+							"is_preview": true,
+							"origin_encoding": "ASCII",
+							"sorttabs_lastactivated": 1446516975.41,
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 763.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "stage_gen.lua",
 					"settings":
 					{
@@ -1351,8 +1291,9 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720441.37,
+							"sorttabs_lastactivated": 1446516899.33,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1363,269 +1304,99 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "board.lua",
+					"buffer": 6,
+					"file": "stage.lua",
 					"settings":
 					{
-						"buffer_size": 14415,
+						"buffer_size": 1129,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6462,
-								6462
+								430,
+								430
 							]
 						],
 						"settings":
 						{
+							"auto_name": "",
+							"is_preview": true,
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720441.09,
+							"sorttabs_lastactivated": 1446516702.04,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4937.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "main.lua",
+					"settings":
+					{
+						"buffer_size": 421,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								375,
+								375
+							]
+						],
+						"settings":
+						{
+							"is_preview": true,
+							"origin_encoding": "ASCII",
+							"sorttabs_lastactivated": 1446516696.59,
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 8,
-					"file": "stage_select.lua",
+					"file": "misc.lua",
 					"settings":
 					{
-						"buffer_size": 489,
+						"buffer_size": 2896,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								131,
-								131
+								0,
+								0
 							]
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720336.58,
+							"sorttabs_lastactivated": 1446516695.89,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 864.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 9,
-					"file": "stage_mgr.lua",
-					"settings":
-					{
-						"buffer_size": 1869,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								139,
-								139
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720264.11,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "game.lua",
-					"settings":
-					{
-						"buffer_size": 12662,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								320,
-								320
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446720066.71,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "text_effect.lua",
-					"settings":
-					{
-						"buffer_size": 567,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								366,
-								366
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446693693.44,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "test.lua",
-					"settings":
-					{
-						"buffer_size": 1922,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1738,
-								1738
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446693590.03,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 378.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "class.lua",
-					"settings":
-					{
-						"buffer_size": 1440,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								252,
-								252
-							]
-						],
-						"settings":
-						{
-							"is_preview": true,
-							"sorttabs_lastactivated": 1446690024.11,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 90.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "hexagon.lua",
-					"settings":
-					{
-						"buffer_size": 7725,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1049,
-								1049
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446687959.08,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 216.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "rope_ani.lua",
-					"settings":
-					{
-						"buffer_size": 247,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								154,
-								154
-							]
-						],
-						"settings":
-						{
-							"origin_encoding": "ASCII",
-							"sorttabs_lastactivated": 1446516694.91,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 16,
 					"file": "render.lua",
 					"settings":
 					{
@@ -1642,6 +1413,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516694.59,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1654,7 +1426,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 10,
 					"file": "ani.lua",
 					"settings":
 					{
@@ -1671,6 +1443,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516693.84,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1683,7 +1456,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 11,
 					"file": "icing_ani.lua",
 					"settings":
 					{
@@ -1700,6 +1473,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516693.43,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1712,7 +1486,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 19,
+					"buffer": 12,
 					"file": "arrow_ani.lua",
 					"settings":
 					{
@@ -1729,6 +1503,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516692.75,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1741,7 +1516,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 20,
+					"buffer": 13,
 					"file": "bomb_ani.lua",
 					"settings":
 					{
@@ -1758,6 +1533,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516690.67,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1770,7 +1546,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 21,
+					"buffer": 14,
 					"file": "row_ani.lua",
 					"settings":
 					{
@@ -1787,6 +1563,7 @@
 						],
 						"settings":
 						{
+							"is_preview": true,
 							"origin_encoding": "ASCII",
 							"sorttabs_lastactivated": 1446516690.11,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
@@ -1799,7 +1576,37 @@
 					"type": "text"
 				},
 				{
-					"buffer": 22,
+					"buffer": 15,
+					"file": "hexagon.lua",
+					"settings":
+					{
+						"buffer_size": 7680,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3597,
+								3581
+							]
+						],
+						"settings":
+						{
+							"is_preview": true,
+							"origin_encoding": "ASCII",
+							"sorttabs_lastactivated": 1446515364.2,
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1620.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 16,
 					"file": "lineup_ani.lua",
 					"settings":
 					{
@@ -1829,7 +1636,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 23,
+					"buffer": 17,
 					"file": "ai.lua",
 					"settings":
 					{
@@ -1859,7 +1666,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 24,
+					"buffer": 18,
 					"file": "block_mgr.lua",
 					"settings":
 					{
@@ -1889,7 +1696,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 25,
+					"buffer": 19,
 					"file": "block.lua",
 					"settings":
 					{
@@ -1919,7 +1726,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 26,
+					"buffer": 20,
 					"file": "stage_convert.lua",
 					"settings":
 					{
@@ -1949,7 +1756,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 27,
+					"buffer": 21,
 					"file": "result.txt",
 					"settings":
 					{
@@ -1977,7 +1784,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 28,
+					"buffer": 22,
 					"file": "score.lua",
 					"settings":
 					{
@@ -2006,7 +1813,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 29,
+					"buffer": 23,
 					"file": "sound.lua",
 					"settings":
 					{
@@ -2030,6 +1837,64 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 216.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 24,
+					"file": "test.lua",
+					"settings":
+					{
+						"buffer_size": 1742,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"is_preview": true,
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 299.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 25,
+					"file": "text_effect.lua",
+					"settings":
+					{
+						"buffer_size": 567,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								207,
+								207
+							]
+						],
+						"settings":
+						{
+							"is_preview": true,
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2083,88 +1948,8 @@
 		"selected_items":
 		[
 			[
-				"cha",
-				"/E/git_project/games/block/chapter_select.lua"
-			],
-			[
-				"main",
-				"/E/git_project/games/block/main.lua"
-			],
-			[
-				"sm",
-				"/E/git_project/games/block/state_manager.lua"
-			],
-			[
-				"bu",
-				"/E/git_project/games/block/button.lua"
-			],
-			[
-				"mai",
-				"/E/git_project/games/block/main.lua"
-			],
-			[
-				"mis",
-				"/E/git_project/games/block/misc.lua"
-			],
-			[
-				"mi",
-				"/E/git_project/games/block/misc.lua"
-			],
-			[
-				"misc",
-				"/E/git_project/games/block/misc.lua"
-			],
-			[
-				"smgr",
-				"/E/git_project/games/block/stage_mgr.lua"
-			],
-			[
-				"stasee",
-				"/E/git_project/games/block/stage_selector.lua"
-			],
-			[
-				"game",
-				"/E/git_project/games/block/game.lua"
-			],
-			[
-				"state",
-				"/E/git_project/games/block/state_manager.lua"
-			],
-			[
-				"stam",
-				"/E/git_project/games/block/state_manager.lua"
-			],
-			[
-				"class",
-				"/E/git_project/games/block/class.lua"
-			],
-			[
-				"sta",
-				"/E/git_project/games/block/stage.lua"
-			],
-			[
 				"stama",
-				"/E/git_project/games/block/stage_manager.lua"
-			],
-			[
-				"clas",
-				"/E/git_project/games/block/class.lua"
-			],
-			[
-				"cals",
-				"/E/git_project/games/block/stage.lua"
-			],
-			[
-				"gam",
-				"/E/git_project/games/block/game.lua"
-			],
-			[
-				"boar",
-				"/E/git_project/games/block/board.lua"
-			],
-			[
-				"hex",
-				"/E/git_project/games/block/hexagon.lua"
+				"/E/git_project/games/block/stage_mgr.lua"
 			],
 			[
 				"ex",
@@ -2189,6 +1974,22 @@
 			[
 				"hexa",
 				"/E/git_project/games/block/hexagon.lua"
+			],
+			[
+				"boar",
+				"/E/git_project/games/block/board.lua"
+			],
+			[
+				"game",
+				"/E/git_project/games/block/game.lua"
+			],
+			[
+				"hex",
+				"/E/git_project/games/block/hexagon.lua"
+			],
+			[
+				"mai",
+				"/Users/lovebird/git_project/games/block/main.lua"
 			],
 			[
 				"boai",
@@ -2243,8 +2044,16 @@
 				"/E/git_project/games/block/block_mgr.lua"
 			],
 			[
+				"main",
+				"/E/program/love-0.9.2-win64/block/main.lua"
+			],
+			[
 				"dist",
 				"/E/program/love-0.9.2-win64/block/dist.bat"
+			],
+			[
+				"misc",
+				"/E/program/love-0.9.2-win64/block/misc.lua"
 			],
 			[
 				"block",
@@ -2275,6 +2084,10 @@
 				"/E/program/love-0.9.2-win64/block/block_mgr.lua"
 			],
 			[
+				"stam",
+				"/E/program/love-0.9.2-win64/block/stage_mgr.lua"
+			],
+			[
 				"sgen",
 				"/E/program/love-0.9.2-win64/block/stage_gen.lua"
 			],
@@ -2283,7 +2096,15 @@
 				"/E/program/love-0.9.2-win64/block/stage_mgr.lua"
 			],
 			[
+				"mis",
+				"/E/program/love-0.9.2-win64/block/misc.lua"
+			],
+			[
 				"stagemg",
+				"/E/program/love-0.9.2-win64/block/stage_mgr.lua"
+			],
+			[
+				"sm",
 				"/E/program/love-0.9.2-win64/block/stage_mgr.lua"
 			],
 			[
@@ -2333,6 +2154,10 @@
 			[
 				"blco",
 				"/E/program/love-0.9.2-win64/block/board.lua"
+			],
+			[
+				"gam",
+				"/E/program/love-0.9.2-win64/block/game.lua"
 			],
 			[
 				"gob",

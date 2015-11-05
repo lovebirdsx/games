@@ -7,11 +7,13 @@ require('sound')
 require('block_mgr')
 require('game')
 require('chapter_select')
+require('event_dispatcher')
 
 -- display live console output in sublime text2
 io.stdout:setvbuf('no')
 
 local sm = StateManager:instance()
+local ed = EventDispatcher:instance()
 
 function love.load()
 	love.window.setMode(900, 600)
@@ -25,8 +27,8 @@ function love.load()
 	block_mgr.init()
 	stage_mgr.init()
 
-	-- sm:start(Game:new())
-	sm:start(ChapterSelect:new())
+	-- sm:start(Game())
+	sm:start(ChapterSelect())
 end
 
 function love.quit()
@@ -44,17 +46,21 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-	sm:mousepressed(x, y, button)
+	ed:send('mousepressed', x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy)
-	sm:mousemoved(x, y, dx, dy)
+	ed:send('mousemoved', x, y, dx, dy)
 end
 
 function love.mousereleased(x, y, button)
-	sm:mousereleased(x, y, button)
+	ed:send('mousereleased', x, y, button)
 end
 
 function love.keypressed(key)
-	sm:keypressed(key)
+	ed:send('keypressed', key)
+
+	if key == 'escape' then
+		love.event.quit()
+	end
 end

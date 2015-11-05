@@ -81,32 +81,37 @@ function test_board_hex_kb()
 end
 
 function test_class()
-	Foo = class()
-	function Foo:init(name)
+	Foo = class(function (self, name)
 		self.name = name
-		print('Foo:init()')
-	end
+	end)
+
 	function Foo:fun()
 		print('Foo:fun()->' .. self.name)
 	end
 
-	Bar = class(Foo)
-
-	function Bar:init(name)
-		Foo.init(self, name)
-		print('Bar:init()')
+	function Foo:car()
+		print('Foo:car()->' .. self.name)
 	end
+
+	Bar = class(Foo)
 
 	function Bar:fun()
 		Foo.fun(self)
-		print('Bar:fun()->' .. self.name)
 	end
 
-	b = Bar:new('bar')
+	b = Bar('bar')
 	b:fun()
+	b:car()
 
-	f = Foo:new('foo')
+	f = Foo('foo')
 	f:fun()
+	f:car()
 end
 
-test_class()
+function test_math_ceil()
+	for i = 1, 10 do
+		print(i, math.ceil(i / 4))
+	end
+end
+
+test_math_ceil()
