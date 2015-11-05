@@ -113,21 +113,21 @@ function hexagon.create(rx, ry, id, scale, x, y)
 
 	function self._draw_bomb()
 		love.graphics.setColor(77, 77, 75)
-		render.draw_hex_slot(x, y, scale)
+		render.draw_hex_slot(self.x, self.y, self.scale)
 		love.graphics.setColor(255, 255, 255)
 		render.draw_bomb(self.x, self.y, self.scale)
 	end
 
 	function self._draw_icing()
 		love.graphics.setColor(77, 77, 75)
-		render.draw_hex_slot(x, y, scale)
+		render.draw_hex_slot(self.x, self.y, self.scale)
 		love.graphics.setColor(255, 255, 255)
 		render.draw_icing(self.x, self.y, self.scale)
 	end
 
 	function self._draw_2arrow(rotato)
 		love.graphics.setColor(77, 77, 75)
-		render.draw_hex_slot(x, y, scale)
+		render.draw_hex_slot(self.x, self.y, self.scale)
 		love.graphics.setColor(255, 255, 255)
 		render.draw_2arrow(self.x, self.y, self.scale, rotato)
 	end

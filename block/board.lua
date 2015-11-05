@@ -168,6 +168,17 @@ function board.create(s, x, y)
 		self._init_nearby_hex()
 		self._init_kb_hex()
 	end
+
+	function self.set_pos_and_scale(x, y, scale)
+		self._x, self._y = x, y
+		local w2 = hexagon.w * scale / 2
+		local h2 = hexagon.h * scale / 2
+		self.foreach_hex(function (hex)
+			local hx = self._x + w2 * hex.rx
+			local hy = self._y + h2 * hex.ry
+			hex.x, hex.y, hex.scale = hx, hy, scale
+		end)
+	end	
 	
 	function self.gen_snapshot()
 		local snapshot = {}
@@ -263,7 +274,7 @@ function board.create(s, x, y)
 
 	function self.set_hex(rx, ry, id)
 		self._hexagons[rx][ry].id = id
-	end
+	end	
 
 	function self.can_locate_any(b)
 		local result = false

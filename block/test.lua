@@ -2,6 +2,7 @@ require('block_mgr')
 require('board')
 require('hexagon')
 require('misc')
+require('class')
 
 function test_board()
 	board.init()
@@ -79,17 +80,33 @@ function test_board_hex_kb()
 	end)
 end
 
--- test_hexagon()
--- test_board()
--- test_table_save()
--- gen_block_ids()
--- math.randomseed(os.time())
--- test_board_excel_string()
--- test_serialize()
--- test_read_write_file()
--- printf('%02d', 1)
--- test_print()
+function test_class()
+	Foo = class()
+	function Foo:init(name)
+		self.name = name
+		print('Foo:init()')
+	end
+	function Foo:fun()
+		print('Foo:fun()->' .. self.name)
+	end
 
--- test_board_k()
-test_board_hex_kb()
+	Bar = class(Foo)
 
+	function Bar:init(name)
+		Foo.init(self, name)
+		print('Bar:init()')
+	end
+
+	function Bar:fun()
+		Foo.fun(self)
+		print('Bar:fun()->' .. self.name)
+	end
+
+	b = Bar:new('bar')
+	b:fun()
+
+	f = Foo:new('foo')
+	f:fun()
+end
+
+test_class()

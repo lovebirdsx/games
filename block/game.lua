@@ -1,4 +1,5 @@
 require('board')
+require('class')
 require('block')
 require('render')
 require('block_mgr')
@@ -15,59 +16,61 @@ require('stage_mgr')
 local SAVE_FILE = 'save.dat'
 local VERSION = '1.1'
 
-game = {}
+Game = class(State)
 
-local _selected_block = nil
-local _block_dx = 0
-local _block_dy = 0
-local _game_over = false
-local _stage_clear = false
-local _stage_failed = false
-local _score = 0
-local _explotion = nil
-local _is_highscore = false
-local _highscore = 0
-local _board = nil
-local _auto_run = false
-local _is_auto_running = false
-local _auto_move_speed = 300
-local _turn_finish = true
-local _score_ani = {}
-local _develop = false
-local _volume = 1
-local _stage_mode = true
+function Game:init(b)
+	self._board = b or board.create()	
+end
 
-function game.init()
-	render.init()
-	font.init()
-	sound.init()
-	block_mgr.init()
-	stage_mgr.init()
-	_board = board.create()
-	game.load()
+function Game:enter(board)
+	self._selected_block = nil
+	self._block_dx = 0
+	self._block_dy = 0
+	self._game_over = false
+	self._stage_clear = false
+	self._stage_failed = false
+	self._score = 0
+	self._explotion = nil
+	self._is_highscore = false
+	self._highscore = 0	
+	self._auto_run = false
+	self._is_auto_running = false
+	self._auto_move_speed = 300
+	self._turn_finish = true
+	self._score_ani = {}
+	self._develop = false
+	self._volume = 1
+	self._stage_mode = true
+
+	self:load()
 	
-	if _stage_mode then
-		game.load_stage()
+	if self._stage_mode then
+		self:load_stage()
 	end
 
-	love.audio.setVolume(_volume)
+	love.audio.setVolume(self._volume)
 	sound.play('music')
 end
 
-function game.save()
+function Game:exit()
+	sound.stop('music')
+	self:save()
+end
+
+function Game:save()
 	local save = {
-		score = _score,
-		highscore = _highscore,
-		gameover = _game_over,
+		score = self._score,
+		highscore = self._highscore,
+		gameover = self._game_over,
 		block_mgr = block_mgr.gen_snapshot(),
 		stage_mgr = stage_mgr.gen_snapshot(),
-		board = _board.gen_snapshot(),
-		auto_move_speed = _auto_move_speed,
-		develop = _develop,
-		auto_run = _auto_run,
-		volume = _volume,		
-		stage_mode = _stage_mode,
-		version = VERSION,
+		board = self._board.gen_snapshot(),
+		auto_move_speed = self._auto_move_speed,
+		develop = self._develop,
+		auto_run = self._auto_run,
+		volume = self._volume,		
+		stage_mode = self._stage_mode,
+		version = self.VERSION,
 	}
 
 	local s = serialize(save)
@@ -76,7 +79,7 @@ function game.save()
 	end
 end
 
-function game.load()
+function Game:load()
 	local s = love.filesystem.read(SAVE_FILE)
 	if not s then
 		printf('game load from %s failed', SAVE_FILE)
@@ -90,40 +93,42 @@ function game.load()
 	end
 
 	if save.version and save.version == VERSION then		
-		_score = save.score
-		_highscore = save.highscore
+		
 		block_mgr.apply_snapshot(save.block_mgr)
 		stage_mgr.apply_snapshot(save.stage_mgr)
-		_board.apply_snapshot(save.board)
-		_game_over = save.gameover
-		_auto_move_speed = save.auto_move_speed
-		_develop = save.develop
-		_auto_run = save.auto_run
-		_volume = save.volume	
-		_stage_mode = save.stage_mode
+
+		self._score = save.score
+		self._highscore = save.highscore
+		self._board.apply_snapshot(save.board)
+		self._game_over = save.gameover
+		self._auto_move_speed = save.auto_move_speed
+		self._develop = save.develop
+		self._auto_run = save.auto_run
+		self._volume = save.volume	
+		self._stage_mode = save.stage_mode
 	end
 end
 
-function game.load_prev_stage(count)
-	if _stage_mode then
+function Game:load_prev_stage(count)
+	if self._stage_mode then
 		stage_mgr.move_to_prev_stage(count)
-		game.load_stage()
+		self:load_stage()
 	end
 end
 
-function game.load_next_stage(count)
-	if _stage_mode then		
+function Game:load_next_stage(count)
+	if self._stage_mode then		
 		stage_mgr.move_to_next_stage(count)
-		game.load_stage()
+		self:load_stage()
 	end
 end
 
-function game.load_stage()
+function Game:load_stage()
 	local board, blocks, move = stage_mgr.load_current()
 	if board then
-		_board = board
+		self._board = board
 		block_mgr.update(blocks)
-		_stage_clear = false
+		self._stage_clear = false
 
 		local m = move
 		while m do
@@ -133,45 +138,45 @@ function game.load_stage()
 	end
 end
 
-function game.restart()
-	_game_over =false
-	_score = 0
-	_is_highscore = false
-	_selected_block = nil
-	_board = board.create()
+function Game:restart()
+	self._game_over =false
+	self._score = 0
+	self._is_highscore = false
+	self._selected_block = nil
+	self._board = board.create()
 	block_mgr.init()	
 
 	sound.stop('gameover')
 	sound.play('music')
 end
 
-function game.restart_stage()
-	_stage_failed = false
-	_stage_clear = false
-	_score = 0
-	_selected_block = nil
-	game.load_stage()
+function Game:restart_stage()
+	self._stage_failed = false
+	self._stage_clear = false
+	self._score = 0
+	self._selected_block = nil
+	self:load_stage()
 	sound.stop('gameover')
 	sound.play('music')
 end
 
-function game.update(dt)
-	_board.update(dt)
-	if _explotion then
-		_explotion.update(dt)
+function Game:update(dt)	
+	self._board.update(dt)
+	if self._explotion then
+		self._explotion.update(dt)
 	end
 
-	for _, ani in ipairs(_score_ani) do
+	for _, ani in ipairs(self._score_ani) do
 		ani.update(dt)
 	end	
 
-	if _develop and _auto_run and _turn_finish then
-		game.auto_move()
+	if self._develop and self._auto_run and self._turn_finish then
+		self:auto_move()
 	end
 end
 
-function game.auto_move()
-	if not _turn_finish then
+function Game:auto_move()
+	if not self._turn_finish then
 		return
 	end
 
@@ -187,174 +192,178 @@ function game.auto_move()
 		print(string.format('Move block[%d] %d to %d %d, socre = %d',
 			move.block.type, move.block.id, move.rx, move.ry, score))
 		local sx, sy = move.block.x, move.block.y
-		local h = _board.get_hex(move.rx, move.ry)
+		local h = self._board.get_hex(move.rx, move.ry)
 		local ex, ey = h.x, h.y
-		local move_time = ((ex-sx) ^ 2 + (ey - sy) ^ 2) ^ 0.5 / _auto_move_speed
-		game.start_move_block(move.block, sx, sy)
-		_is_auto_running = true
+		local move_time = ((ex-sx) ^ 2 + (ey - sy) ^ 2) ^ 0.5 / self._auto_move_speed
+		self:start_move_block(move.block, sx, sy)
+		self._is_auto_running = true
 		local ti = timer.create()
 		ti.start(1/30, true, function (t)
 			t = t - ai_time
 			if t < move_time then
 				local x = sx + (ex - sx) * t / move_time
 				local y = sy + (ey - sy) * t / move_time
-				game.move_block(x, y)
+				self:move_block(x, y)
 			else
-				game.move_block(ex, ey)
-				game.locate_block(ex, ey)
+				self:move_block(ex, ey)
+				self:locate_block(ex, ey)
 				ti.stop()
-				_is_auto_running = false
+				self._is_auto_running = false
 			end
 		end)
 	end
 end
 
 local _key_routines = {
-	['delete'] = function ()
+	['delete'] = function (self)
 		if _stage_mode then
 			stage_mgr.del()
-			game.load_stage()
+			Game:load_stage()
 		end
 	end,
-	['escape'] = function ()
+	['escape'] = function (self)
 		love.event.quit()
 	end,
-	['t'] = function ()
-		_stage_mode = not _stage_mode
-		if _stage_mode then
-			game.load_stage()
+	['t'] = function (self)
+		self._stage_mode = not self._stage_mode
+		if self._stage_mode then
+			self:load_stage()
 		else
-			game.restart()
+			self:restart()
 		end
 	end,	
-	['left'] = function ()
+	['left'] = function (self)
 		local count = 1
 		if love.keyboard.isDown('lctrl') then
 			count = 10
 		elseif love.keyboard.isDown('lalt') then
 			count = 100
 		end
-		game.load_prev_stage(count)
+		self:load_prev_stage(count)
 	end,
 
-	['right'] = function ()		
+	['right'] = function (self)		
 		local count = 1
 		if love.keyboard.isDown('lctrl') then
 			count = 10
 		elseif love.keyboard.isDown('lalt') then
 			count = 100
 		end
-		game.load_next_stage(count)
+		self:load_next_stage(count)
 	end,
-	['g'] = function ()
-		if _develop and _turn_finish then
-			game.auto_move()
+	['g'] = function (self)
+		if self._develop and self._turn_finish then
+			self:auto_move()
 		end
 	end,
-	['r'] = function ()
-		if _stage_mode then
-			game.load_stage()
+	['r'] = function (self)
+		if self._stage_mode then
+			self:load_stage()
 		else
-			game.restart()
+			self:restart()
 		end
 	end,
-	['a'] = function ()
-		if _develop then
-			_auto_run = not _auto_run
+	['a'] = function (self)
+		if self._develop then
+			self._auto_run = not self._auto_run
 		end
 	end,
-	['d'] = function ()
-		_develop = not _develop		
+	['d'] = function (self)
+		self._develop = not self._develop		
 	end,
-	['up'] = function ()
-		_auto_move_speed = _auto_move_speed * 2
+	['up'] = function (self)
+		self._auto_move_speed = self._auto_move_speed * 2
 	end,
-	['down'] = function ()
-		_auto_move_speed = _auto_move_speed / 2
+	['down'] = function (self)
+		self._auto_move_speed = self._auto_move_speed / 2
 	end,
-	['h'] = function ()
-		print(_board.excel_string())
+	['h'] = function (self)
+		print(self._board.excel_string())
 	end,
-	['s'] = function ()
-		_volume = _volume == 1 and 0 or 1		
-		love.audio.setVolume(_volume)
+	['s'] = function (self)
+		self._volume = self._volume == 1 and 0 or 1		
+		love.audio.setVolume(self._volume)
 	end,
-	['i'] = function ()
-		if not _stage_mode then
-			_board.random_icing()
+	['i'] = function (self)
+		if not self._stage_mode then
+			self._board.random_icing()
 		end
 	end,
-	['b'] = function ()
-		if not _stage_mode then
-			_board.random_bomb()
+	['b'] = function (self)
+		if not self._stage_mode then
+			self._board.random_bomb()
 		end
 	end,
-	['n'] = function ()
-		if not _stage_mode then
-			_board.random_2arrow()
+	['n'] = function (self)
+		if not self._stage_mode then
+			self._board.random_2arrow()
 		end
 	end,
-	['o'] = function ()
-		if not _stage_mode then
-			_board.random_rope()
+	['o'] = function (self)
+		if not self._stage_mode then
+			self._board.random_rope()
 		end
 	end,
-	[' '] = function ()
-		if _game_over or _stage_clear or _stage_failed then
-			if not _stage_mode then
-				game.restart()
+	[' '] = function (self)
+		if self._game_over or self._stage_clear or self._stage_failed then
+			if not self._stage_mode then
+				self:restart()
 			else
-				if _stage_failed then
-					game.restart_stage()
+				if self._stage_failed then
+					self:restart_stage()
 				else
-					game.load_next_stage()
+					self:load_next_stage()
 				end
 			end
 		end		
+	end,
+	['j'] = function (self)
+		self._board.set_pos_and_scale(100, 100, 0.2)
 	end
 }
 
-function love.keypressed(key)
+function Game:keypressed(key)
 	printf('key [%s] pressed', key)
 	local f = _key_routines[key]
-	if f then f() end
+	if f then f(self) end
 end
 
-function game.render()
+function Game:draw()
 	render.draw_bg()
-	_board.draw()
-	if _explotion then
-		_explotion.draw()
+	self._board.draw()
+	if self._explotion then
+		self._explotion.draw()
 	end
 
-	for _, ani in ipairs(_score_ani) do
+	for _, ani in ipairs(self._score_ani) do
 		ani.draw()
 	end
 
 	block_mgr.draw()
 
 	love.graphics.setColor(255, 255, 255, 255)
-	if _stage_mode then
+	if self._stage_mode then
 		-- font.print('big', string.format('[%d/%d] %s', 
 		-- 	stage_mgr.stage_id(), stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 10)
 	else
-		font.print('hurge', string.format('%d', _score), 400, 10)
-		font.print('big', string.format('Best: %d', _highscore), 30, 10)
+		font.print('hurge', string.format('%d', self._score), 400, 10)
+		font.print('big', string.format('Best: %d', self._highscore), 30, 10)
 	end
 
-	if _develop then
+	if self._develop then
 		font.print('normal', string.format('auto[%s] stage_mode[%s] [%d/%d] %s', 
-			_auto_run, _stage_mode, stage_mgr.stage_id(), stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 580)
+			self._auto_run, self._stage_mode, stage_mgr.stage_id(), 
+			stage_mgr.stage_total(), stage_mgr.stage_file()), 30, 580)
 	end
 
-	if _game_over then
+	if self._game_over then
 		love.graphics.setColor(0, 0, 0, 192)
 		love.graphics.rectangle('fill', 0, 0, 
 			love.window.getWidth(), love.window.getHeight())
 		
-		if _is_highscore then
+		if self._is_highscore then
 			love.graphics.setColor(123, 212, 57, 255)
-			font.print('hurge', string.format('High score: %d !', _score),
+			font.print('hurge', string.format('High score: %d !', self._score),
 				300, 250)
 		else
 			love.graphics.setColor(255, 20, 20, 255)
@@ -362,7 +371,7 @@ function game.render()
 		end
 	end
 
-	if _stage_clear then
+	if self._stage_clear then
 		love.graphics.setColor(0, 0, 0, 192)
 		love.graphics.rectangle('fill', 0, 0, 
 			love.window.getWidth(), love.window.getHeight())		
@@ -370,7 +379,7 @@ function game.render()
 		font.print('hurge', 'Stage Clear', 350, 250)
 	end
 
-	if _stage_failed then
+	if self._stage_failed then
 		love.graphics.setColor(0, 0, 0, 192)
 		love.graphics.rectangle('fill', 0, 0, 
 			love.window.getWidth(), love.window.getHeight())
@@ -379,69 +388,69 @@ function game.render()
 	end
 end
 
-function game.can_locate_any_block()
+function Game:can_locate_any_block()
 	for _, b in ipairs(block_mgr.blocks()) do
-		if _board.can_locate_any(b) then
+		if self._board.can_locate_any(b) then
 			return true
 		end
 	end
 	return false
 end
 
-function game.start_move_block_by_pos(x, y)
-	if not _selected_block and _turn_finish then
+function Game:start_move_block_by_pos(x, y)
+	if not self._selected_block and self._turn_finish then
 		local b = block_mgr.get_block_by_pos(x, y)
 		if b then
-			game.start_move_block(b, x, y)
+			self:start_move_block(b, x, y)
 		end		
 	end
 end
 
-function game.start_move_block(b, x ,y)
+function Game:start_move_block(b, x ,y)
 	block_mgr.select_block(b)
-	_turn_finish = false
-	_selected_block = b
-	_block_dx = x - _selected_block.x
-	_block_dy = y - _selected_block.y
+	self._turn_finish = false
+	self._selected_block = b
+	self._block_dx = x - b.x
+	self._block_dy = y - b.y
 	sound.play('pickup')
 end
 
-function game.move_block(x, y)
-	if _selected_block then
-		_selected_block.set_pos(x - _block_dx, y - _block_dy)
-		_board.unfocus()
-		if _board.can_locate(_selected_block) then			
-			_board.focus(_selected_block)
+function Game:move_block(x, y)
+	if self._selected_block then
+		self._selected_block.set_pos(x - _block_dx, y - _block_dy)
+		self._board.unfocus()
+		if self._board.can_locate(self._selected_block) then
+			self._board.focus(self._selected_block)
 		end
 	end
 end
 
-function game.gameover()
-	_game_over = true
+function Game:gameover()
+	self._game_over = true
 	sound.stop('music')
-	if _score > _highscore then
-		_highscore = _score
-		_is_highscore = true
-		game.save()
+	if self._score > self._highscore then
+		self._highscore = self._score
+		self._is_highscore = true
+		self:save()
 		sound.play('highscore')
 	else
 		sound.play('gameover')
 	end
 end
 
-function game.stage_clear()
+function Game:stage_clear()
 	sound.play('highscore')
-	_stage_clear = true
+	self._stage_clear = true
 end
 
-function game.stage_faild()
-	_stage_failed = true
+function Game:stage_faild()
 	sound.stop('music')
 	sound.play('gameover')
+	self._stage_failed = true
 end
 
-function game.add_score_ani(score, rx, ry)
-	local h = _board.get_hex(rx, ry)
+function Game:add_score_ani(score, rx, ry)
+	local h = self._board.get_hex(rx, ry)
 	local ani = text_effect.create('+' .. score, h.x, h.y - 100)
 	table.insert(_score_ani, ani)
 	ani.on_end(function ()
@@ -454,108 +463,108 @@ function game.add_score_ani(score, rx, ry)
 	end)
 end
 
-function game.check_end()
-	if not _stage_mode then
-		if not game.can_locate_any_block() then
-			game.gameover()
+function Game:check_end()
+	if not self._stage_mode then
+		if not self:can_locate_any_block() then
+			self:gameover()
 		end
 	else
-		if _board.is_all_clear() and block_mgr.is_clear() then
-			game.stage_clear()
+		if self._board.is_all_clear() and block_mgr.is_clear() then
+			self:stage_clear()
 		else
-			if not game.can_locate_any_block() then
-				game.stage_faild()
+			if not self:can_locate_any_block() then
+				self:stage_faild()
 			end
 		end
 	end
 end
 
-function game.locate(b, rx, ry)
-	_board.locate_by_rx_ry(b, rx, ry)
+function Game:locate(b, rx, ry)
+	self._board.locate_by_rx_ry(b, rx, ry)
 	block_mgr.remove_select()
 	
 	local current_s = score.block_score(b)
-	_score = _score + current_s
-	game.add_score_ani(current_s, rx, ry)
+	self._score = self._score + current_s
+	self:add_score_ani(current_s, rx, ry)
 	sound.play('place')
 
-	if _board.can_line_up() then
-		local result = _board.get_lineup_rows()
-		_turn_finish = false
-		_board.start_lineup_ani(function ()
-			_turn_finish = true
+	if self._board.can_line_up() then
+		local result = self._board.get_lineup_rows()
+		self._turn_finish = false
+		self._board.start_lineup_ani(function ()
+			self._turn_finish = true
 			if #result > 1 then
 				sound.play_tier(#result - 1)
 			end
 			local current_s = score.line_up_score(result)
-			_score = _score + current_s
-			game.add_score_ani(current_s, rx, ry)
-			if not _stage_mode then
+			self._score = self._score + self.current_s
+			self:add_score_ani(current_s, rx, ry)
+			if not self._stage_mode then
 				block_mgr.refill()
 			end
-			game.check_end()
+			self:check_end()
 		end)
 	else
-		_turn_finish = true
-		if not _stage_mode then
+		self._turn_finish = true
+		if not self._stage_mode then
 			block_mgr.refill()
 		end
 
-		game.check_end()
+		self:check_end()
 	end
 end
 
-function game.locate_block(x, y)
-	if _selected_block then
-   		if _board.can_locate(_selected_block) then
-   			local h = _board.get_hex_by_pos(_selected_block.x,
-   				_selected_block.y)
-   			game.locate(_selected_block, h.rx, h.ry)
+function Game:locate_block(x, y)
+	if self._selected_block then
+   		if self._board.can_locate(self._selected_block) then
+   			local h = self._board.get_hex_by_pos(self._selected_block.x,
+   				self._selected_block.y)
+   			self:locate(self._selected_block, h.rx, h.ry)
    		else
-   			_turn_finish = true
+   			self._turn_finish = true
    			block_mgr.unselect()   			
    			sound.play('placewrong')
 		end
-   		_selected_block = nil
+   		self._selected_block = nil
    	end
 end
 
-function love.mousepressed(x, y, button)
+function Game:mousepressed(x, y, button)
 	if button == 'l'  then
-		if _game_over or _stage_clear or _stage_failed then
-			if not _stage_mode then
-				game.restart()
+		if self._game_over or self._stage_clear or self._stage_failed then
+			if not self._stage_mode then
+				self:restart()
 			else
-				if _stage_failed then
-					game.restart_stage()
+				if self._stage_failed then
+					self:restart_stage()
 				else
-					game.load_next_stage()
+					self:load_next_stage()
 				end
 			end
 		else
-			if not _is_auto_running then
-				game.start_move_block_by_pos(x, y)		
+			if not self._is_auto_running then
+				self:start_move_block_by_pos(x, y)		
 			end
 		end
 	end
 
 	if button == 'r' then
-		if _stage_mode then
-			game.restart_stage()
+		if self._stage_mode then
+			self:restart_stage()
 		else
-			game.restart()
+			self:restart()
 		end
 	end
 end
 
-function love.mousemoved(x, y, dx, dy)
-	if not _is_auto_running then
-		game.move_block(x, y)
+function Game:mousemoved(x, y, dx, dy)
+	if not self._is_auto_running then
+		self:move_block(x, y)
 	end
 end
 
-function love.mousereleased(x, y, button)
-   	if button == "l" and not _is_auto_running then
-   		game.locate_block(x, y)
+function Game:mousereleased(x, y, button)
+   	if button == "l" and not self._is_auto_running then
+   		self:locate_block(x, y)
    	end
 end

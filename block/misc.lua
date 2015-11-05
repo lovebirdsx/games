@@ -19,6 +19,23 @@ function list_filepath(folder)
 	return result
 end
 
+-- return dir list in folder(include folder name)
+function list_dirs(folder)
+   if not love then error('can only use in love2d') end
+
+    local result = {}
+    local lfs = love.filesystem
+    local files = lfs.getDirectoryItems(folder)
+    for _, f in ipairs(files) do
+        local path = folder .. '/' .. f
+        if lfs.isDirectory(path) then
+            table.insert(result, f)
+        end
+    end
+    
+    return result 
+end
+
 function get_dir(str,sep)
     sep = sep or'/'
     return str:match("(.*"..sep..")")
