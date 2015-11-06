@@ -3,6 +3,7 @@ require('board')
 require('hexagon')
 require('misc')
 require('class')
+require('log')
 
 function test_board()
 	board.init()
@@ -114,4 +115,10 @@ function test_math_ceil()
 	end
 end
 
-test_math_ceil()
+function test_log()
+	set_log_level('fatal')
+	debug('hello %s', 'world')
+	info('hello %s', 'world')
+	warning('hello %s', 'world')
+	fatal('hello %s', 'world')
+end

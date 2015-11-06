@@ -46,15 +46,13 @@ Game = class(State, function (self, b)
 
 	love.audio.setVolume(self._volume)
 	sound.play('music')
-end)
 
-function Game:enter(board)
 	local ed = EventDispatcher:instance()
 	ed:add('mousepressed', self, self.mousepressed)
 	ed:add('mousemoved', self, self.mousemoved)
 	ed:add('mousereleased', self, self.mousereleased)
 	ed:add('keypressed', self, self.keypressed)
-end
+end)
 
 function Game:exit()
 	local ed = EventDispatcher:instance()
@@ -154,7 +152,7 @@ function Game:restart()
 	self._is_highscore = false
 	self._selected_block = nil
 	self._board = board.create()
-	block_mgr.init()	
+	block_mgr.init()
 
 	sound.stop('gameover')
 	sound.play('music')
@@ -380,7 +378,7 @@ function Game:draw()
 	if self._stage_clear then
 		love.graphics.setColor(0, 0, 0, 192)
 		love.graphics.rectangle('fill', 0, 0, 
-			love.window.getWidth(), love.window.getHeight())		
+			love.window.getWidth(), love.window.getHeight())
 		love.graphics.setColor(123, 212, 57, 255)
 		font.print('hurge', 'Stage Clear', 350, 250)
 	end
@@ -502,7 +500,7 @@ function Game:locate(b, rx, ry)
 			if #result > 1 then
 				sound.play_tier(#result - 1)
 			end
-			local current_s = score.line_up_score(result)
+			local current_s = score.lineup_score(result)
 			self._score = self._score + current_s
 			self:add_score_ani(current_s, rx, ry)
 			if not self._stage_mode then

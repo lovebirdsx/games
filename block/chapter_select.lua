@@ -1,6 +1,5 @@
 require('misc')
 require('state_manager')
-require('stage_select')
 require('button')
 
 local BW = 180
@@ -16,7 +15,6 @@ ChapterSelect = class(State, function (self)
 
 	local chapters = list_dirs('chapters')
 	table.sort(chapters)
-	print(DRAW_X, DRAW_Y)
 	for i, name in ipairs(chapters) do
 		local r = math.floor((i + COL_COUNT - 1) / COL_COUNT)
 		local c = (i % COL_COUNT == 0) and COL_COUNT or (i % COL_COUNT)
@@ -24,14 +22,21 @@ ChapterSelect = class(State, function (self)
 		local y = DRAW_Y + (r - 1) * (BH_OFFSET + BH)
 		local text = string.format('Chapter %d', name)
 		local botton = Button(text, x, y, BW, BH)
-		print(r, c, x, y, text)
+		botton.font_type = 'hurge'
 		self.buttons:add(botton)
-		botton.on_click = function ()
-			local stage_select = StageSelect('chapters/' .. name)
+		botton.on_click = function ()			
 			local sm = StateManager:instance()
-			sm:change_state(stage_select)
+			sm:change_state('StageSelect', 'chapters/' .. name)
 		end
 	end
+
+	-- return button
+	local screen_w = love.graphics.getWidth()
+	local bReturn = Button('Back', screen_w - 100, 20, 100, 50)
+	bReturn.on_click = function ()
+		StateManager:instance():change_state('ModeSelect')
+	end
+	self.buttons:add(bReturn)
 end)
 
 function ChapterSelect:draw()

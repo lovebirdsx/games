@@ -2,12 +2,8 @@ require('class')
 
 State = class()
 
-function State:enter()
-	-- body
-end
-
 function State:exit()
-	-- body
+	
 end
 
 function State:update(dt)
@@ -18,34 +14,39 @@ function State:draw()
 	
 end
 
-StateManager = class()
+local sm
 
-local _sm
+StateManager = class(function(self)	
+	self.states = {}
+end)
 
 function StateManager:instance()
-	if not _sm then _sm = StateManager() end
-	return _sm
+	if not sm then sm = StateManager() end
+	return sm
 end
 
-function StateManager:start(state)
-	self.state = state
-	self.state:enter()
+function StateManager:reg(state_name, constructor)
+	self.states[state_name] = constructor
+end
+
+function StateManager:change_state(state_name, ...)
+	if self.current_state then
+		self.current_state:exit()
+	end
+	local state = self.states[state_name](...)
+	self.current_state = state	
 end
 
 function StateManager:exit()
-	if self.state then self.state:exit() end
+	if self.current_state then self.current_state:exit() end
 end
 
 function StateManager:update(dt)
-	self.state:update(dt)
+	self.current_state:update(dt)
 end
 
 function StateManager:draw()
-	self.state:draw()
+	self.current_state:draw()
 end
 
-function StateManager:change_state(State)
-	self.state:exit()
-	self.state = State
-	self.state:enter()
-end
+

@@ -1,19 +1,18 @@
 require('state_manager')
-require('stage_mgr')
 require('timer_mgr')
 require('render')
 require('font')
 require('sound')
-require('block_mgr')
-require('game')
-require('chapter_select')
 require('event_dispatcher')
+require('mode_select')
+require('states')
+require('game_saver')
 
 -- display live console output in sublime text2
 io.stdout:setvbuf('no')
 
-local sm = StateManager:instance()
 local ed = EventDispatcher:instance()
+local sm = StateManager:instance()
 
 function love.load()
 	love.window.setMode(900, 600)
@@ -24,15 +23,15 @@ function love.load()
 	render.init()
 	font.init()
 	sound.init()
-	block_mgr.init()
-	stage_mgr.init()
+	states.init()
 
-	-- sm:start(Game())
-	sm:start(ChapterSelect())
+	sm:change_state('ModeSelect')
+	GameSaver:instance():load()
 end
 
 function love.quit()
 	sm:exit()
+	GameSaver:instance():save()
 	return false
 end
 

@@ -1,6 +1,7 @@
 require('misc')
 require('board')
 require('block_mgr')
+require('log')
 stage = {}
 
 function stage.save(board, blocks, best_move, file)
@@ -31,7 +32,7 @@ end
 
 function stage.load_by_str(str)
 	local save = unserialize(str)
-	if not save then
+	if not save then		
 		return nil
 	end
 	local board = board.create()
@@ -55,5 +56,5 @@ end
 
 -- return board, blocks, move
 function stage.load(file)
-	stage.load_by_str(read_file(file))
+	return stage.load_by_str(read_file(file))
 end

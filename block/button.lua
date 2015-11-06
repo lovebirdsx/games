@@ -10,6 +10,7 @@ Button = class(
       self.width = width
       self.height = height
       self.visible = true
+      self.font_type = 'big'
       self.color = {
          normal  = { 200, 200, 200 },
          hover   = { 255, 255,   0 },
@@ -55,9 +56,9 @@ function Button:draw()
               or self.color.normal
    local pop = self.pressed and 1 or 0
    love.graphics.setColor(0, 0, 0)
-   font.print('hurge', self.text, self.x + 2, self.y + 2)
+   font.print(self.font_type, self.text, self.x + 2, self.y + 2)
    love.graphics.setColor(unpack(color))
-   font.print('hurge', self.text, self.x + pop, self.y + pop)
+   font.print(self.font_type, self.text, self.x + pop, self.y + pop)
 end
 
 Buttons = class(function (self)

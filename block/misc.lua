@@ -105,25 +105,29 @@ function unserialize(lua)
 end
 
 function write_file(filepath, str)
-    if love then error('love2d app can not call this function') end
-
-	local f, err = io.open(filepath, 'w+')
-	if not f then
-		printf('write_file %s failed: %s', filepath, err)
-        return
-	end
-	f:write(str)
-	f:close()
+    if love then
+        love.filesystem.write(filepath, str)
+    else
+    	local f, err = io.open(filepath, 'w+')
+    	if not f then
+    		printf('write_file %s failed: %s', filepath, err)
+            return
+    	end
+    	f:write(str)
+    	f:close()
+    end
 end
 
 function read_file(filepath)
-    if love then error('love2d app can not call this function') end
-
-	local f, err = io.open(filepath)
-	if not f then
-		printf('read_file %s failed: %s', filepath, err)
-	end
-	return f:read('*all')
+    if love then
+        return love.filesystem.read(filepath)
+    else
+        local f, err = io.open(filepath)
+        if not f then
+            printf('read_file %s failed: %s', filepath, err)
+        end
+        return f:read('*all')
+    end	
 end
 
 function printf(fmt, ...)
