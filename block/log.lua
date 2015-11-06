@@ -10,10 +10,10 @@ local LOG_LEVEL_MAP = {
 	fatal = FATAL,
 }
 
-local log_level = INFO
+local log_level = DEBUG
 
 function _log_printf(desire, prefix, fmt, ...)
-	if log_level >= desire then
+	if log_level <= desire then
 		io.write(prefix)
 		printf(string.format(fmt, ...))
 	end

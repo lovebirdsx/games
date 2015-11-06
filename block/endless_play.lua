@@ -6,25 +6,32 @@ require('game_saver')
 
 EndlessPlay = class(State, function (self)
 	self.play = Play()
-	self.buttons = Buttons()	
+	self.buttons = Buttons()
+	self.highscore = 0
+	self.is_highscore = false
 
 	local block_generator = self.play.block_generator
 	block_generator:set_max_block_count(3)
 	block_generator:fill_all()
 	block_generator:set_pos(700, 150)
-	block_generator:set_can_refill(false)
 
 	local ed = EventDispatcher:instance()
 	ed:add('mousepressed', self, self.mousepressed)
 
 	local screen_w = love.graphics.getWidth()
 	local back_button = Button('Back', screen_w - 100, 20, 100, 50)
-	back_button.on_click = function ()		
-		local sm = StateManager:instance()		
+	back_button.on_click = function ()
+		local sm = StateManager:instance()
 		sm:change_state('ModeSelect')
 	end
 
+	local restart_button = Button('Restart', screen_w - 100 - 80, 20, 100, 50)
+	restart_button.on_click = function (b)
+		self:restart()
+	end
+
 	self.buttons:add(back_button)
+	self.buttons:add(restart_button)
 
 	self:load()
 
@@ -40,14 +47,14 @@ function EndlessPlay:load()
 	local cfg = GameSaver:instance():get('EndlessPlay')
 	if cfg then
 		self.highscore = cfg.highscore
-	else
-		self.highscore = 0
+		self.play:apply_snapshot(cfg.play)		
 	end
 end
 
 function EndlessPlay:save()
 	local cfg = {}
 	cfg.highscore = self.highscore
+	cfg.play = self.play:gen_snapshot()	
 	GameSaver:instance():set('EndlessPlay', cfg)
 end
 
@@ -66,6 +73,7 @@ end
 function EndlessPlay:draw()
 	self.play:draw()
 	self.buttons:draw()
+	love.graphics.setColor(255, 255, 255, 255)
 	font.print('hurge', string.format('%d', self.play.score), 400, 10)
 	font.print('big', string.format('Best: %d', self.highscore), 30, 10)
 
@@ -89,7 +97,7 @@ function EndlessPlay:restart()
 	self.is_highscore = false
 end
 
-function EndlessPlay:mousepressed(button, x, y)
+function EndlessPlay:mousepressed(x, y, button)
 	if self.play:is_end() then
 		if button == 'l' then
 			self:restart()

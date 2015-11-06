@@ -43,11 +43,18 @@ function Play:release()
 end
 
 function Play:gen_snapshot()
-	
+	local s = {
+		socre = self.score,
+		board = self.board.gen_snapshot(),
+		block_generator = self.block_generator:gen_snapshot()
+	}
+	return s
 end
 
 function Play:apply_snapshot(s)
-	
+	self.socre = s.score
+	self.board.apply_snapshot(s.board)
+	self.block_generator:apply_snapshot(s.block_generator)
 end
 
 function Play:on_end(cb)
@@ -75,7 +82,7 @@ function Play:auto_move()
 	end
 
 	local start_time = love.timer.getTime( )
-	local move, score = ai.get_best_move(board,
+	local move, score = ai.get_best_move(self.board,
 		self.block_generator:get_blocks())
 	local end_time = love.timer.getTime()
 	local ai_time = end_time - start_time
@@ -206,8 +213,8 @@ end
 function Play:check_end()
 	if not self:can_locate_any_block() or self.block_generator:is_clear() then
 		self.play_end = true
-		if self.end_cb then
-			self.end_cb()
+		if self.on_end_cb then
+			self.on_end_cb()
 		end
 	end
 end
@@ -262,7 +269,7 @@ function Play:reset()
 	self.selected_block = nil
 	self.play_end = false
 	self.board:clear_all()
-	self.block_generator:reset()
+	self.block_generator:fill_all()
 end
 
 function Play:mousepressed(x, y, button)

@@ -13,12 +13,18 @@ StagePlay = class(State, function (self, path)
 	ed:add('mousepressed', self, self.mousepressed)
 
 	local screen_w = love.graphics.getWidth()
-	local bReturn = Button('Return', screen_w - 200, 20, 100, 50)
-	bReturn.on_click = function ()		
-		StateManager:instance():change_state('ModeSelect')
+	local back_button = Button('Back', screen_w - 100, 20, 100, 50)
+	back_button.on_click = function (self)		
+		StateManager:instance():change_state('StageSelect')
 	end
 
-	self.buttons:add(bReturn)
+	local restart_button = Button('Restart', screen_w - 100 - 80, 20, 100, 50)
+	restart_button.on_click = function (b)
+		self:restart()
+	end
+
+	self.buttons:add(restart_button)
+	self.buttons:add(back_button)
 
 	self:load()
 end)
@@ -31,6 +37,7 @@ function StagePlay:load()
 	local block_generator = self.play.block_generator
 	block_generator:set_max_block_count(#blocks)
 	block_generator:update_blocks(blocks)
+	block_generator:set_can_refill(false)
 
 	if #blocks == 3 then
 		block_generator:set_pos(700, 150)
@@ -76,11 +83,11 @@ function StagePlay:restart()
 	self:load()
 end
 
-function StagePlay:mousepressed(button, x, y)
+function StagePlay:mousepressed(x, y, button)
 	if self.play:is_end() then
 		if button == 'l' then
 			if self.play.board.is_all_clear() then
-				StateManager:instance():change_state('ModeSelect')
+				StateManager:instance():change_state('StageSelect')
 			else
 				self:restart()
 			end

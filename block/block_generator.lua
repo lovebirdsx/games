@@ -57,7 +57,7 @@ function BlockGenerator:set_max_block_count(count)
 end
 
 function BlockGenerator:fill_all()
-	for i = #self.blocks + 1, self.max_block_count do
+	for i = 1, self.max_block_count do
 		local b = self:gen()
 		b.id = i
 		b.set_pos(self:get_block_pos(i))
@@ -90,11 +90,11 @@ function BlockGenerator:gen_snapshot()
 end
 
 function BlockGenerator:apply_snapshot(s)
-	self.max_block_count = s.block_count
+	self.max_block_count = s.max_block_count
 	for i=1,self.max_block_count do		
 		local b = self:gen(s.types[i])
 		b.id = i
-		b.set_pos(get_pos(i))
+		b.set_pos(self:get_block_pos(i))
 		b.set_scale(SCALE)
 		self.blocks[i] = b
 	end
@@ -200,7 +200,7 @@ function BlockGenerator:update_blocks(blocks)
 	for i, b in ipairs(blocks) do
 		local b0 = self:gen(b.type)
 		b0.id = i
-		b0.set_pos(get_pos(i))
+		b0.set_pos(self:get_block_pos(i))
 		b0.set_scale(SCALE)
 		self.blocks[i] = b0
 	end

@@ -37,13 +37,16 @@ function GameSaver:load()
 	end
 
 	self.data = data
+	info('GameSave: load %s ok', self.path)
 end
 
 function GameSaver:save()
 	self.data.version = self.version
 	local s = serialize(self.data)
 	if not love.filesystem.write(self.path, s, #s) then
-		printf('GameSaver: save to %s failed', self.path)
+		warning('GameSaver: save to %s failed', self.path)
+	else
+		info('GameSaver: save to %s succeed', self.path)
 	end
 end
 

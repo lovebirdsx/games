@@ -11,7 +11,7 @@ local BOARD_X = (900 - BOARD_W * COL_COUNT - BOARD_OFF_X * (COL_COUNT - 1)) / 2
 local BOARD_Y = 150
 
 BoardButton = class(Button, function (self, text, x, y, w, h, board)
-	Button(self, text, x, y, w, h)
+	Button.init(self, text, x, y, w, h)
 	self.board = board
 	board.set_pos_and_scale(x + w / 2, y + h / 2, BOARD_W / BOARD_ORIGIN_W)
 end)
@@ -20,7 +20,11 @@ function BoardButton:draw()
 	self.board.draw()
 end
 
+local prev_path
+
 StageSelect = class(State, function (self, path)
+	path = path or prev_path
+	prev_path = path
 	self.stages = self:create_stages(path)
 	local buttons = Buttons()
 
@@ -31,9 +35,9 @@ StageSelect = class(State, function (self, path)
 		local x = BOARD_X + (c - 1) * (BOARD_OFF_X + BOARD_W)
 		local y = BOARD_Y + (r - 1) * (BOARD_OFF_Y + BOARD_H)
 		local b = BoardButton(s.path, x, y, BOARD_W, BOARD_H, s.board)
-		b.on_click = function (self)
+		b.on_click = function (self)			
 			StateManager:instance():change_state('StagePlay', self.text)
-		end
+		end		
 		buttons:add(b)
 	end
 

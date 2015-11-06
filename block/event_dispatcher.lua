@@ -34,10 +34,10 @@ function EventDispatcher:remove(type, obj, fun)
 	end
 end
 
-function EventDispatcher:send(type, ...)
-	local map = self.msg_map[type]
+function EventDispatcher:send(t, ...)
+	local map = self.msg_map[t]
 	if map then
-		for _, ent in ipairs(map) do
+		for _, ent in ipairs(map) do			
 			ent.fun(ent.obj, ...)
 		end
 	end

@@ -122,3 +122,27 @@ function test_log()
 	warning('hello %s', 'world')
 	fatal('hello %s', 'world')
 end
+
+function test_class2()
+	Foo = class(function (self, name)
+		self.name = name
+	end)
+
+	function Foo:fun()
+		print(self.name)
+	end
+
+	Bar = class(Foo)
+
+	Car = class(Foo, function (self)
+		Foo.init(self, 'car')
+	end)
+
+	local b = Bar('bar')
+	b:fun()
+
+	local c = Car()
+	c:fun()
+end
+
+test_class2()

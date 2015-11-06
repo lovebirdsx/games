@@ -1,6 +1,7 @@
 require('event_dispatcher')
 require('class')
 require('font')
+require('log')
 
 Button = class(
    function (self, text, x, y, width, height)
@@ -30,6 +31,7 @@ end
 function Button:mousereleased(x, y)
    self.pressed = self.hover
    if self.pressed then
+      debug('[%s] clicked', self.text)
       self.pressed = false
       self:on_click()
    end
