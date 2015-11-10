@@ -241,7 +241,7 @@ function main()
 		if board then
 			local filepath = string.format('stages/[%d-%d][%d-%d][%d]',
 				gen_board_fun_id, gen_block_fun_id, hex_count, block_count, seed)
-			stage.save(board, blocks, best_move, filepath)
+			stage_loader.save(board, blocks, best_move, filepath)
 			printf('save %s\t\t\t\t\t', filepath)
 		end
 	end

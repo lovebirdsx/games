@@ -1,4 +1,5 @@
 config = {
 	save_file = 'block.save',
-	version = '2.0.0.1',
+	version = '2.0.0.2',
+	chapter_dir = 'chapters',
 }

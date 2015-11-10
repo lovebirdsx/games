@@ -7,6 +7,7 @@ require('event_dispatcher')
 require('mode_select')
 require('states')
 require('game_saver')
+require('chapters')
 
 -- display live console output in sublime text2
 io.stdout:setvbuf('no')
@@ -27,10 +28,12 @@ function love.load()
 
 	sm:change_state('ModeSelect')
 	GameSaver:instance():load()
+	Chapters:instance():load()
 end
 
 function love.quit()
 	sm:exit()
+	Chapters:instance():save()
 	GameSaver:instance():save()
 	return false
 end

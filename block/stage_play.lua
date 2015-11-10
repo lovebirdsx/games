@@ -2,10 +2,10 @@ require('state_manager')
 require('play')
 require('button')
 require('event_dispatcher')
-require('stage')
+require('stage_loader')
 
-StagePlay = class(State, function (self, path)
-	self.path = path
+StagePlay = class(State, function (self, stage)
+	self.stage = stage
 	self.play = Play()
 	self.buttons = Buttons()	
 
@@ -30,7 +30,7 @@ StagePlay = class(State, function (self, path)
 end)
 
 function StagePlay:load()
-	local board, blocks, move = stage.load(self.path)
+	local board, blocks, move = stage_loader.load(self.stage.path)
 
 	self.play.board = board
 

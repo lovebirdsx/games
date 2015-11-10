@@ -19,7 +19,7 @@ local function list_filepath(folder)
 	local function list_filepath_inner(result, folder)				
 		for f in lfs.dir(folder) do
 			if f ~= '.' and f ~= '..' then
-				local path = folder .. '/' .. f			
+				local path = folder .. '/' .. f
 				if lfs.attributes(path,'mode')== 'directory' then
 					list_filepath_inner(result, path)
 				elseif lfs.attributes(path,'mode') == 'file' then

@@ -1,4 +1,4 @@
-require('stage')
+require('stage_loader')
 require('state_manager')
 require('misc')
 require('button')
@@ -10,34 +10,36 @@ local COL_COUNT = 4
 local BOARD_X = (900 - BOARD_W * COL_COUNT - BOARD_OFF_X * (COL_COUNT - 1)) / 2
 local BOARD_Y = 150
 
-BoardButton = class(Button, function (self, text, x, y, w, h, board)
-	Button.init(self, text, x, y, w, h)
-	self.board = board
-	board.set_pos_and_scale(x + w / 2, y + h / 2, BOARD_W / BOARD_ORIGIN_W)
+BoardButton = class(Button, function (self, stage, x, y, w, h)
+	Button.init(self, stage.name, x, y, w, h)
+	self.stage = stage
+	stage.board.set_pos_and_scale(x + w / 2, y + h / 2, BOARD_W / BOARD_ORIGIN_W)
 end)
 
 function BoardButton:draw()
-	self.board.draw()
+	self.stage.board.draw()
 end
 
-local prev_path
+local prev_chapter
 
-StageSelect = class(State, function (self, path)
-	path = path or prev_path
-	prev_path = path
-	self.stages = self:create_stages(path)
+StageSelect = class(State, function (self, chapter)
+	chapter = chapter or prev_chapter
+	prev_chapter = chapter
+
 	local buttons = Buttons()
-
 	-- stage buttons
-	for i, s in ipairs(self.stages) do
+	for i, stage in ipairs(chapter.stages) do
+		stage:load()
+		
 		local r = math.floor((i + COL_COUNT - 1) / COL_COUNT)
 		local c = (i % COL_COUNT == 0) and COL_COUNT or (i % COL_COUNT)
 		local x = BOARD_X + (c - 1) * (BOARD_OFF_X + BOARD_W)
 		local y = BOARD_Y + (r - 1) * (BOARD_OFF_Y + BOARD_H)
-		local b = BoardButton(s.path, x, y, BOARD_W, BOARD_H, s.board)
-		b.on_click = function (self)			
-			StateManager:instance():change_state('StagePlay', self.text)
-		end		
+		
+		local b = BoardButton(stage, x, y, BOARD_W, BOARD_H)
+		b.on_click = function (b)
+			StateManager:instance():change_state('StagePlay', b.stage)
+		end
 		buttons:add(b)
 	end
 
@@ -51,22 +53,6 @@ StageSelect = class(State, function (self, path)
 
 	self.buttons = buttons
 end)
-
-function StageSelect:load_stage(path)	
-	local board = stage.load(path)
-	return {board = board, path = path}
-end
-
-function StageSelect:create_stages(path)
-	local stages = {}
-	local files = list_filepath(path)
-	table.sort(files)
-	for i, file in ipairs(files) do
-		stages[i] = self:load_stage(file)
-	end
-
-	return stages
-end
 
 function StageSelect:exit()
 	self.buttons:release()

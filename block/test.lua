@@ -145,4 +145,37 @@ function test_class2()
 	c:fun()
 end
 
-test_class2()
+function test_path()
+	local path = 'stages/adjflasdjfajks.dat'
+	local dir, file, ext = string.match(path, "(.-)([^\\/]-%.?([^%.\\/]*))$")
+	print(dir, file, ext)
+end
+
+function test_list_files()
+	local files = list_filepath('chapters')
+	for i,v in ipairs(files) do
+		print(i,v)
+	end
+end
+
+function test_list_dirs()
+	local files = list_dirs('chapters')
+	for i,v in ipairs(files) do
+		print(i,v)
+	end
+end
+
+require('chapters')
+function test_chapters()
+	chapters = Chapters('chapters')	
+	for _, chapter in ipairs(chapters.chapters) do
+		print(chapter.name)
+		for _, stage in ipairs(chapter.stages) do
+			print(stage.name)
+			stage:load()
+			print(stage.board.excel_string())
+		end
+	end
+end
+
+test_chapters()

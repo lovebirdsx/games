@@ -1,39 +1,89 @@
-function list_filepath(folder)
-    if not love then error('can only use in love2d') end
-
-	local result = {}
-	
-	local function list_filepath_inner(result, folder)		
-		local lfs = love.filesystem
-		local files = lfs.getDirectoryItems(folder)
-		for _, f in ipairs(files) do			
-			local path = folder .. '/' .. f			
-			if lfs.isDirectory(path) then
-				list_filepath_inner(result, path)
-			elseif lfs.isFile(path) then
-				table.insert(result, path)
-			end		
-		end
-	end
-	list_filepath_inner(result, folder)
-	return result
+if not love then
+    require('lfs')
 end
 
--- return dir list in folder(include folder name)
-function list_dirs(folder)
-   if not love then error('can only use in love2d') end
+function list_filepath_love2d(folder)
+    local result = {}
+    
+    local function list_filepath_inner(result, folder)      
+        local lfs = love.filesystem
+        local files = lfs.getDirectoryItems(folder)
+        for _, f in ipairs(files) do            
+            local path = folder .. '/' .. f         
+            if lfs.isDirectory(path) then
+                list_filepath_inner(result, path)
+            elseif lfs.isFile(path) then
+                table.insert(result, path)
+            end     
+        end
+    end
+    list_filepath_inner(result, folder)
+    return result
+end
 
+function list_filepath_lfs(folder)
+    local result = {}
+    local function helper(folder, result)        
+        for file in lfs.dir(folder) do
+            local path = folder .. '/' .. file
+            if lfs.attributes(path, 'mode') == 'file' then
+                result[#result + 1] = path
+            elseif lfs.attributes(path, 'mode')== 'directory' then
+                if file ~= '.' and file ~= '..' then
+                    helper(path, result)
+                end
+            end
+        end    
+    end
+
+    helper(folder, result)
+    return result
+end
+
+function list_filepath(folder)
+    if love then
+        return list_filepath_love2d(folder)
+    else
+        return list_filepath_lfs(folder)
+    end	
+end
+
+function list_dirs_love2d(folder)
     local result = {}
     local lfs = love.filesystem
     local files = lfs.getDirectoryItems(folder)
     for _, f in ipairs(files) do
         local path = folder .. '/' .. f
         if lfs.isDirectory(path) then
-            table.insert(result, f)
+            table.insert(result, path)
         end
     end
     
     return result 
+end
+
+function list_dirs_lfs(folder)
+    local result = {}
+    
+    for file in lfs.dir(folder) do
+        local path = folder .. '/' .. file        
+        if lfs.attributes(path, 'mode')== 'directory' then
+            if file ~= '.' and file ~= '..' then
+                table.insert(result, path)
+            end
+        end
+    end
+
+    return result
+end
+
+-- return dir list in folder(include folder name)
+function list_dirs(folder)
+    if love then
+        return list_dirs_love2d(folder)
+    else
+        return list_dirs_lfs(folder)
+    end    
 end
 
 function get_dir(str,sep)
@@ -132,4 +182,9 @@ end
 
 function printf(fmt, ...)
 	print(string.format(fmt, ...))
+end
+
+function get_file_name_by_path(path)
+    local dir, file, ext = string.match(path, "(.-)([^\\/]-%.?([^%.\\/]*))$")
+    return file
 end
