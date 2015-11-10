@@ -8,6 +8,7 @@ require('mode_select')
 require('states')
 require('game_saver')
 require('chapters')
+require('text_effect')
 
 -- display live console output in sublime text2
 io.stdout:setvbuf('no')
@@ -41,10 +42,12 @@ end
 function love.update(dt)	
 	sm:update(dt)
 	timer_mgr.update(dt)
+	text_effect_mgr.update(dt)
 end
 
 function love.draw()
 	sm:draw()
+	text_effect_mgr.draw()
 end
 
 function love.mousepressed(x, y, button)

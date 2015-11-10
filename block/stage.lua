@@ -2,7 +2,7 @@ require('stage_loader')
 require('class')
 
 Stage = class(function(self, path)
-	self.path = path	
+	self.path = path
 	self.name = get_file_name_by_path(path)
 	self.is_passed = false
 	self.is_unlocked = false

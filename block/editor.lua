@@ -17,7 +17,7 @@ require('event_dispatcher')
 local SAVE_FILE = 'save.dat'
 local VERSION = '1.1'
 
-Game = class(State, function (self, b)
+Editor = class(State, function (self, b)
 	self._board = b or board.create()
 	self._selected_block = nil
 	self._block_dx = 0	
@@ -54,7 +54,7 @@ Game = class(State, function (self, b)
 	ed:add('keypressed', self, self.keypressed)
 end)
 
-function Game:exit()
+function Editor:exit()
 	local ed = EventDispatcher:instance()
 	ed:remove('mousepressed', self, self.mousepressed)
 	ed:remove('mousemoved', self, self.mousemoved)
@@ -65,7 +65,7 @@ function Game:exit()
 	self:save()
 end
 
-function Game:save()
+function Editor:save()
 	local save = {
 		score = self._score,
 		highscore = self._highscore,
@@ -87,7 +87,7 @@ function Game:save()
 	end
 end
 
-function Game:load()
+function Editor:load()
 	local s = love.filesystem.read(SAVE_FILE)
 	if not s then
 		printf('game load from %s failed', SAVE_FILE)
@@ -117,21 +117,21 @@ function Game:load()
 	end
 end
 
-function Game:load_prev_stage(count)
+function Editor:load_prev_stage(count)
 	if self._stage_mode then
 		stage_mgr.move_to_prev_stage(count)
 		self:load_stage()
 	end
 end
 
-function Game:load_next_stage(count)
+function Editor:load_next_stage(count)
 	if self._stage_mode then		
 		stage_mgr.move_to_next_stage(count)
 		self:load_stage()
 	end
 end
 
-function Game:load_stage()
+function Editor:load_stage()
 	local board, blocks, move = stage_mgr.load_current()
 	if board then
 		self._board = board
@@ -146,7 +146,7 @@ function Game:load_stage()
 	end
 end
 
-function Game:restart()
+function Editor:restart()
 	self._game_over =false
 	self._score = 0
 	self._is_highscore = false
@@ -158,7 +158,7 @@ function Game:restart()
 	sound.play('music')
 end
 
-function Game:restart_stage()
+function Editor:restart_stage()
 	self._stage_failed = false
 	self._stage_clear = false
 	self._score = 0
@@ -168,7 +168,7 @@ function Game:restart_stage()
 	sound.play('music')
 end
 
-function Game:update(dt)	
+function Editor:update(dt)	
 	self._board.update(dt)
 	if self._explotion then
 		self._explotion.update(dt)
@@ -183,7 +183,7 @@ function Game:update(dt)
 	end
 end
 
-function Game:auto_move()
+function Editor:auto_move()
 	if not self._turn_finish then
 		return
 	end
@@ -226,7 +226,7 @@ local _key_routines = {
 	['delete'] = function (self)
 		if _stage_mode then
 			stage_mgr.del()
-			Game:load_stage()
+			Editor:load_stage()
 		end
 	end,
 	['t'] = function (self)
@@ -327,12 +327,12 @@ local _key_routines = {
 	end
 }
 
-function Game:keypressed(key)
+function Editor:keypressed(key)
 	local f = _key_routines[key]
 	if f then f(self) end
 end
 
-function Game:draw()
+function Editor:draw()
 	render.draw_bg()
 	self._board.draw()
 	if self._explotion then
@@ -392,7 +392,7 @@ function Game:draw()
 	end
 end
 
-function Game:can_locate_any_block()
+function Editor:can_locate_any_block()
 	for _, b in ipairs(block_mgr.blocks()) do
 		if self._board.can_locate_any(b) then
 			return true
@@ -401,7 +401,7 @@ function Game:can_locate_any_block()
 	return false
 end
 
-function Game:start_move_block_by_pos(x, y)
+function Editor:start_move_block_by_pos(x, y)
 	if not self._selected_block and self._turn_finish then
 		local b = block_mgr.get_block_by_pos(x, y)
 		if b then
@@ -410,7 +410,7 @@ function Game:start_move_block_by_pos(x, y)
 	end
 end
 
-function Game:start_move_block(b, x ,y)
+function Editor:start_move_block(b, x ,y)
 	block_mgr.select_block(b)
 	self._turn_finish = false
 	self._selected_block = b
@@ -419,7 +419,7 @@ function Game:start_move_block(b, x ,y)
 	sound.play('pickup')
 end
 
-function Game:move_block(x, y)
+function Editor:move_block(x, y)
 	if self._selected_block then
 		self._selected_block.set_pos(x - self._block_dx, y - self._block_dy)
 		self._board.unfocus()
@@ -429,7 +429,7 @@ function Game:move_block(x, y)
 	end
 end
 
-function Game:gameover()
+function Editor:gameover()
 	self._game_over = true
 	sound.stop('music')
 	if self._score > self._highscore then
@@ -442,18 +442,18 @@ function Game:gameover()
 	end
 end
 
-function Game:stage_clear()
+function Editor:stage_clear()
 	sound.play('highscore')
 	self._stage_clear = true
 end
 
-function Game:stage_faild()
+function Editor:stage_faild()
 	sound.stop('music')
 	sound.play('gameover')
 	self._stage_failed = true
 end
 
-function Game:add_score_ani(score, rx, ry)
+function Editor:add_score_ani(score, rx, ry)
 	local h = self._board.get_hex(rx, ry)
 	local ani = text_effect.create('+' .. score, h.x, h.y - 100)
 	table.insert(self._score_ani, ani)
@@ -467,7 +467,7 @@ function Game:add_score_ani(score, rx, ry)
 	end)
 end
 
-function Game:check_end()
+function Editor:check_end()
 	if not self._stage_mode then
 		if not self:can_locate_any_block() then
 			self:gameover()
@@ -483,7 +483,7 @@ function Game:check_end()
 	end
 end
 
-function Game:locate(b, rx, ry)
+function Editor:locate(b, rx, ry)
 	self._board.locate_by_rx_ry(b, rx, ry)
 	block_mgr.remove_select()
 	
@@ -518,7 +518,7 @@ function Game:locate(b, rx, ry)
 	end
 end
 
-function Game:locate_block(x, y)
+function Editor:locate_block(x, y)
 	if self._selected_block then
    		if self._board.can_locate(self._selected_block) then
    			local h = self._board.get_hex_by_pos(self._selected_block.x,
@@ -533,7 +533,7 @@ function Game:locate_block(x, y)
    	end
 end
 
-function Game:mousepressed(x, y, button)
+function Editor:mousepressed(x, y, button)
 	if button == 'l'  then
 		if self._game_over or self._stage_clear or self._stage_failed then
 			if not self._stage_mode then
@@ -561,13 +561,13 @@ function Game:mousepressed(x, y, button)
 	end
 end
 
-function Game:mousemoved(x, y, dx, dy)
+function Editor:mousemoved(x, y, dx, dy)
 	if not self._is_auto_running then
 		self:move_block(x, y)
 	end
 end
 
-function Game:mousereleased(x, y, button)
+function Editor:mousereleased(x, y, button)
    	if button == "l" and not self._is_auto_running then
    		self:locate_block(x, y)
    	end

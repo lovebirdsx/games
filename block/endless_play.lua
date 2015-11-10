@@ -3,6 +3,7 @@ require('play')
 require('button')
 require('event_dispatcher')
 require('game_saver')
+require('sound')
 
 EndlessPlay = class(State, function (self)
 	self.play = Play()
@@ -36,25 +37,30 @@ EndlessPlay = class(State, function (self)
 	self:load()
 
 	self.play:on_end(function ()		
+		sound.stop('music')
 		if self.play.score > self.highscore then
-			self.highscore = self.play.score
+			self.highscore = self.play.score			
 			self.is_highscore = true
-		end
+			sound.play('highscore')
+			sound.play('gameover')
+		end		
 	end)
+
+	sound.play('music')
 end)
 
 function EndlessPlay:load()
 	local cfg = GameSaver:instance():get('EndlessPlay')
 	if cfg then
-		self.highscore = cfg.highscore
-		self.play:apply_snapshot(cfg.play)		
+		self.highscore = cfg.highscore		
+		self.play:apply_snapshot(cfg.play)
 	end
 end
 
 function EndlessPlay:save()
 	local cfg = {}
-	cfg.highscore = self.highscore
-	cfg.play = self.play:gen_snapshot()	
+	cfg.highscore = self.highscore	
+	cfg.play = self.play:gen_snapshot()
 	GameSaver:instance():set('EndlessPlay', cfg)
 end
 
@@ -63,7 +69,10 @@ function EndlessPlay:exit()
 	ed:remove('mousepressed', self, self.mousepressed)
 
 	self.buttons:release()
+	self.play:release()
 	self:save()
+
+	sound.stop('music')
 end
 
 function EndlessPlay:update(dt)
@@ -101,6 +110,7 @@ function EndlessPlay:mousepressed(x, y, button)
 	if self.play:is_end() then
 		if button == 'l' then
 			self:restart()
+			sound.play('music')
 		end
 	end
 end

@@ -5,6 +5,7 @@ require('icing_ani')
 require('bomb_ani')
 require('arrow_ani')
 require('rope_ani')
+require('sound')
 
 board = {}
 
@@ -545,6 +546,7 @@ function board.create(s, x, y)
 		if depth > self._lineup_max_depth then
 			self._is_lineup_ani_end = true
 			if self._lineup_ani_end_cb then
+				sound.play_tier(#self._lineup_rows)				
 				self._lineup_ani_end_cb()
 			end
 			return
@@ -553,8 +555,9 @@ function board.create(s, x, y)
 		-- add row lineup ani
 		local row = self._lineup_rows[depth]
 		if row then
-			local ani = row_ani.create(row)			
-			table.insert(self._lineup_ani_objs, ani)			
+			local ani = row_ani.create(row)
+			sound.play_row(depth)			
+			table.insert(self._lineup_ani_objs, ani)
 		end
 
 		-- add other hex explotion ani

@@ -6,17 +6,11 @@ stage_mgr = {}
 local STAGE_DIR = 'stages'
 local BACKUP_NAME_BASE = 'stages_backup'
 
-local _stage_dir = ''
-local _backup_dir = ''
+local _stage_dir = STAGE_DIR
+local _backup_dir = BACKUP_NAME_BASE .. '-' .. os.date('%m%d-%H%M%S')
 local _stage_files = nil
 local _stage_id = 1
 local _lfs = love.filesystem
-
-function stage_mgr.init(stage_dir)
-	_stage_dir = stage_dir or STAGE_DIR
-	_backup_dir = BACKUP_NAME_BASE .. '-' .. os.date('%m%d-%H%M%S')
-	stage_mgr._scan_files()	
-end
 
 function stage_mgr._scan_files()
 	_stage_files = list_filepath(_stage_dir)
@@ -40,13 +34,8 @@ function stage_mgr.apply_snapshot(s)
 end
 
 function stage_mgr.load_current()	
-	local file = _stage_files[_stage_id]
-	local s = love.filesystem.read(file)
-	if not s then
-		printf('load stage from %s failed', file)
-		return
-	end
-	local board, blocks, move = stage.load_by_str(s)
+	local file = _stage_files[_stage_id]	
+	local board, blocks, move = stage_loader.load(file)
 	if not board then
 		print(string.format('parse stage file %s failed', file))
 		return
@@ -91,3 +80,5 @@ function stage_mgr.del()
 	os.remove(absolute_from)	
 	stage_mgr._scan_files()
 end
+
+stage_mgr._scan_files()

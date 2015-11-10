@@ -18,6 +18,10 @@ end)
 
 function BoardButton:draw()
 	self.stage.board.draw()
+	if not self.stage.is_unlocked then
+		love.graphics.setColor(240, 20, 20)
+		font.print('big', 'locked', self.x + 50, self.y + 65)
+	end
 end
 
 local prev_chapter
@@ -26,11 +30,13 @@ StageSelect = class(State, function (self, chapter)
 	chapter = chapter or prev_chapter
 	prev_chapter = chapter
 
+	chapter:check_unlock()
+
 	local buttons = Buttons()
 	-- stage buttons
 	for i, stage in ipairs(chapter.stages) do
 		stage:load()
-		
+
 		local r = math.floor((i + COL_COUNT - 1) / COL_COUNT)
 		local c = (i % COL_COUNT == 0) and COL_COUNT or (i % COL_COUNT)
 		local x = BOARD_X + (c - 1) * (BOARD_OFF_X + BOARD_W)
@@ -38,7 +44,11 @@ StageSelect = class(State, function (self, chapter)
 		
 		local b = BoardButton(stage, x, y, BOARD_W, BOARD_H)
 		b.on_click = function (b)
-			StateManager:instance():change_state('StagePlay', b.stage)
+			if b.stage.is_unlocked then
+				StateManager:instance():change_state('StagePlay', b.stage)
+			else
+				text_effect.create('Stage is locked', 280, 500)
+			end
 		end
 		buttons:add(b)
 	end

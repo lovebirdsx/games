@@ -3,6 +3,7 @@ require('play')
 require('button')
 require('event_dispatcher')
 require('stage_loader')
+require('sound')
 
 StagePlay = class(State, function (self, stage)
 	self.stage = stage
@@ -27,6 +28,8 @@ StagePlay = class(State, function (self, stage)
 	self.buttons:add(back_button)
 
 	self:load()
+
+	sound.play('music')	
 end)
 
 function StagePlay:load()
@@ -51,6 +54,8 @@ function StagePlay:exit()
 	ed:remove('mousepressed', self, self.mousepressed)
 
 	self.buttons:release()
+	self.play:release()
+	sound.stop('music')
 end
 
 function StagePlay:update(dt)
@@ -87,6 +92,7 @@ function StagePlay:mousepressed(x, y, button)
 	if self.play:is_end() then
 		if button == 'l' then
 			if self.play.board.is_all_clear() then
+				self.stage:pass()
 				StateManager:instance():change_state('StageSelect')
 			else
 				self:restart()

@@ -1,4 +1,5 @@
 require('class')
+require('log')
 
 State = class()
 
@@ -27,6 +28,8 @@ end
 
 function StateManager:reg(state_name, constructor)
 	self.states[state_name] = constructor
+	debug('StateManager: reg %s', state_name)
+	assert(constructor)
 end
 
 function StateManager:change_state(state_name, ...)

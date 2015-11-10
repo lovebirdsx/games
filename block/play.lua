@@ -9,6 +9,7 @@ require('stage')
 require('misc')
 require('event_dispatcher')
 require('block_generator')
+require('log')
 
 Play = class(function (self)
 	self.board = board.create()
@@ -39,20 +40,23 @@ function Play:release()
 	ed:remove('mousemoved', self, self.mousemoved)
 	ed:remove('mousereleased', self, self.mousereleased)
 	ed:remove('keypressed', self, self.keypressed)
-	self:save()
 end
 
 function Play:gen_snapshot()
 	local s = {
-		socre = self.score,
+		score = self.score,
 		board = self.board.gen_snapshot(),
+		develop = self.develop,		
+		auto_move_speed = self.auto_move_speed,
 		block_generator = self.block_generator:gen_snapshot()
 	}
 	return s
 end
 
 function Play:apply_snapshot(s)
-	self.socre = s.score
+	self.score = s.score	
+	self.auto_move_speed = s.auto_move_speed
+	self.develop = s.develop
 	self.board.apply_snapshot(s.board)
 	self.block_generator:apply_snapshot(s.block_generator)
 end
@@ -65,10 +69,6 @@ function Play:update(dt)
 	self.board.update(dt)
 	if self.explotion then
 		self.explotion.update(dt)
-	end
-
-	for _, ani in ipairs(self.score_ani) do
-		ani.update(dt)
 	end	
 
 	if self.develop and self.auto_run and self.turn_finish then
@@ -88,10 +88,10 @@ function Play:auto_move()
 	local ai_time = end_time - start_time
 
 	if not move then
-		print('No best move')
+		debug('Play: No best move')
 	else
-		print(string.format('Move block[%d] %d to %d %d, socre = %d',
-			move.block.type, move.block.id, move.rx, move.ry, score))
+		debug('Play: Move block[%d] %d to %d %d, socre = %d',
+			move.block.type, move.block.id, move.rx, move.ry, score)
 		local sx, sy = move.block.x, move.block.y
 		local h = self.board.get_hex(move.rx, move.ry)
 		local ex, ey = h.x, h.y
@@ -118,22 +118,28 @@ end
 local KEY_FUNS = {
 	['g'] = function (self)
 		if self.develop and self.turn_finish then
+			debug('Play: auto move start')
 			self:auto_move()
+			debug('Play: auto move end')
 		end
 	end,
 	['a'] = function (self)
 		if self.develop then
 			self.auto_run = not self.auto_run
+			debug('Play: auto_run %s', self.auto_run)
 		end
 	end,
 	['d'] = function (self)
-		self.develop = not self.develop		
+		self.develop = not self.develop
+		debug('Play: develop %s', self.develop)
 	end,
 	['up'] = function (self)
 		self.auto_move_speed = self.auto_move_speed * 2
+		debug('Play: auto_move_speed %g', self.auto_move_speed)
 	end,
 	['down'] = function (self)
 		self.auto_move_speed = self.auto_move_speed / 2
+		debug('Play: auto_move_speed %g', self.auto_move_speed)
 	end,	
 }
 
@@ -146,10 +152,6 @@ function Play:draw()
 	self.board.draw()
 	if self.explotion then
 		self.explotion.draw()
-	end
-
-	for _, ani in ipairs(self.score_ani) do
-		ani.draw()
 	end
 
 	self.block_generator:draw()	
@@ -194,16 +196,7 @@ end
 
 function Play:addscore_ani(score, rx, ry)
 	local h = self.board.get_hex(rx, ry)
-	local ani = text_effect.create('+' .. score, h.x, h.y - 100)
-	table.insert(self.score_ani, ani)
-	ani.on_end(function ()
-		for i, a in ipairs(self.score_ani) do
-			if a == ani then
-				table.remove(self.score_ani, i)
-				return
-			end
-		end
-	end)
+	text_effect.create('+' .. score, h.x, h.y - 100)
 end
 
 function Play:is_end()
@@ -233,9 +226,6 @@ function Play:locate(b, rx, ry)
 		self.turn_finish = false
 		self.board.start_lineup_ani(function ()
 			self.turn_finish = true
-			if #result > 1 then
-				sound.play_tier(#result - 1)
-			end
 			local current_s = score.lineup_score(result)
 			self.score = self.score + current_s
 			self:addscore_ani(current_s, rx, ry)
