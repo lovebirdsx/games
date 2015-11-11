@@ -1,5 +1,6 @@
 require('stage_loader')
 require('class')
+require('log')
 
 Stage = class(function(self, path)
 	self.path = path
@@ -11,8 +12,9 @@ end)
 
 function Stage:load()
 	if not self.is_loaded then
+		info('Stage: load %s', self.path)
 		self.board, self.blocks, self.best_move = stage_loader.load(self.path)
-		self.is_loaded = true
+		self.is_loaded = true		
 	end
 end
 

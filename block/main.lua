@@ -27,7 +27,8 @@ function love.load()
 	sound.init()
 	states.init()
 
-	sm:change_state('ModeSelect')
+	-- sm:change_state('ModeSelect')
+	sm:change_state('StageFilter')
 	GameSaver:instance():load()
 	Chapters:instance():load()
 end

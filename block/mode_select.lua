@@ -24,7 +24,7 @@ ModeSelect = class(State, function (self)
 	end
 
 	bEditor.on_click = function ()
-		StateManager:instance():change_state('Editor')
+		StateManager:instance():change_state('StageFilter')
 	end
 
 	self.buttons:add(bEndlessPlay)

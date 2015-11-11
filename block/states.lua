@@ -5,6 +5,7 @@ require('chapter_select')
 require('stage_play')
 require('stage_select')
 require('editor')
+require('stage_filter')
 
 states = {}
 
@@ -16,4 +17,5 @@ function states.init()
 	sm:reg('StageSelect', StageSelect)
 	sm:reg('StagePlay', StagePlay)
 	sm:reg('Editor', Editor)
+	sm:reg('StageFilter', StageFilter)
 end

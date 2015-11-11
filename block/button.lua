@@ -65,6 +65,7 @@ end
 
 Buttons = class(function (self)
    self.buttons = {}
+   self.visible = true
    local ed = EventDispatcher:instance()
    ed:add('mousemoved', self, self.mousemoved)
    ed:add('mousepressed', self, self.mousepressed)
@@ -83,13 +84,26 @@ function Buttons:add(button)
    self.buttons[#self.buttons + 1] = button
 end
 
+function Buttons:remove(button)
+   for i, b in ipairs(self.buttons) do
+      if b == button then
+         table.remove(self.buttons, i)
+         break
+      end
+   end
+end
+
 function Buttons:mousemoved(x, y, dx, dy)
+   if not self.visible then return end
+
    for i,button in ipairs(self.buttons) do
       button:mousemoved(x, y)
    end
 end
 
 function Buttons:mousereleased(x, y, button)
+   if not self.visible then return end
+
    if button == 'l' then
       for i,button in ipairs(self.buttons) do
          button:mousereleased(x, y)
@@ -98,6 +112,8 @@ function Buttons:mousereleased(x, y, button)
 end
 
 function Buttons:mousepressed(x, y, button)
+   if not self.visible then return end
+
    if button == 'l' then
       for i,button in ipairs(self.buttons) do
          button:mousepressed(x, y)
@@ -106,7 +122,25 @@ function Buttons:mousepressed(x, y, button)
 end
 
 function Buttons:draw()
+   if not self.visible then return end
+
    for i,button in ipairs(self.buttons) do
       button:draw()
    end
+end
+
+function Buttons:count()
+   return #self.buttons
+end
+
+function Buttons:get_button(id)
+   return self.buttons[id]
+end
+
+function Buttons:hide()
+   self.visible = false
+end
+
+function Buttons:show()
+   self.visible = true
 end
