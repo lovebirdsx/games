@@ -296,9 +296,11 @@ function board.create(s, x, y)
 	end
 
 	function self.focus(b)
+		local center_hex = self.get_hex_by_pos(b.x, b.y)
+		local rx, ry = center_hex.rx, center_hex.ry
 		local hex_list = b.get_hex_list()
 		for _, h in ipairs(hex_list) do
-			local bh = self.get_hex_by_pos(h.x, h.y)
+			local bh = self.get_hex(h.rx + rx, h.ry + ry)
 			bh.id = h.id
 			bh.focus(true)
 		end

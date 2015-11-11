@@ -5,30 +5,10 @@ require('event_dispatcher')
 require('stage_loader')
 require('sound')
 
-StagePlay = class(State, function (self, stage)
+StagePlay = class(function (self, stage)
 	self.stage = stage
 	self.play = Play()
-	self.buttons = Buttons()	
-
-	local ed = EventDispatcher:instance()
-	ed:add('mousepressed', self, self.mousepressed)
-
-	local screen_w = love.graphics.getWidth()
-	local back_button = Button('Back', screen_w - 100, 20, 100, 50)
-	back_button.on_click = function (self)		
-		StateManager:instance():change_state('StageSelect')
-	end
-
-	local restart_button = Button('Restart', screen_w - 100 - 80, 20, 100, 50)
-	restart_button.on_click = function (b)
-		self:restart()
-	end
-
-	self.buttons:add(restart_button)
-	self.buttons:add(back_button)
-
 	self:load()
-
 	sound.play('music')	
 end)
 
@@ -49,11 +29,14 @@ function StagePlay:load()
 	end
 end
 
-function StagePlay:exit()
-	local ed = EventDispatcher:instance()
-	ed:remove('mousepressed', self, self.mousepressed)
+function StagePlay:set_pos_and_scale(x, y, scale)
+	self.x, self.y, self.scale = x, y, scale
+	self.play.board.set_pos_and_scale(x, y, scale)
+	self.play.block_generator:set_pos(700 + (x - 300) * scale * 0.5, 150)
+	self.play.block_generator:set_scale(scale)
+end
 
-	self.buttons:release()
+function StagePlay:release()
 	self.play:release()
 	sound.stop('music')
 end
@@ -64,7 +47,6 @@ end
 
 function StagePlay:draw()
 	self.play:draw()
-	self.buttons:draw()
 
 	if self.play:is_end() then
 		if self.play.board.is_all_clear() then
@@ -86,17 +68,16 @@ end
 function StagePlay:restart()
 	self.play:reset()
 	self:load()
+
+	if self.scale then
+		self:set_pos_and_scale(self.x, self.y, self.scale)
+	end
 end
 
-function StagePlay:mousepressed(x, y, button)
-	if self.play:is_end() then
-		if button == 'l' then
-			if self.play.board.is_all_clear() then
-				self.stage:pass()
-				StateManager:instance():change_state('StageSelect')
-			else
-				self:restart()
-			end
-		end
-	end
+function StagePlay:is_end()
+	return self.play:is_end()
+end
+
+function StagePlay:succeed()
+	return self.play.board.is_all_clear()
 end

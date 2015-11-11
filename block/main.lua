@@ -64,6 +64,7 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
+	debug('main: [%s] pressed', key)
 	ed:send('keypressed', key)
 
 	if key == 'escape' then

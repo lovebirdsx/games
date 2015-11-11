@@ -152,7 +152,7 @@ function test_path()
 end
 
 function test_list_files()
-	local files = list_filepath('chapters')
+	local files = list_filepath('stages')
 	for i,v in ipairs(files) do
 		print(i,v)
 	end
@@ -178,4 +178,22 @@ function test_chapters()
 	end
 end
 
-test_chapters()
+function test_gsub()
+	local from = 'stages/hello_world.stage'
+	print(from:gsub('/', '-'))
+end
+
+function test_copy_file()
+	write_file('backup/a', 'wahaha')
+	copy_file('backup/a', 'backup/b')
+end
+
+function test_get_file_attr()
+	local attrs = lfs.attributes('backup/.DS_Store')
+	for k,v in pairs(attrs) do
+		print(k,v)
+	end
+end
+
+test_get_file_attr()
+

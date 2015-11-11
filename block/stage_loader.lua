@@ -32,7 +32,8 @@ end
 
 function stage_loader.load_by_str(str)
 	local save = unserialize(str)
-	if not save then		
+	if not save then
+		fatal('stage_loader: unserialize failed\n%s', str)
 		return nil
 	end
 	local board = board.create()
@@ -56,5 +57,10 @@ end
 
 -- return board, blocks, move
 function stage_loader.load(file)
-	return stage_loader.load_by_str(read_file(file))
+	local str = read_file(file)
+	if not str then		
+		return
+	end
+
+	return stage_loader.load_by_str(str)
 end

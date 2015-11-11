@@ -33,7 +33,7 @@ function Button:mousereleased(x, y)
    if self.pressed then
       debug('[%s] clicked', self.text)
       self.pressed = false
-      self:on_click()
+      self:on_click()      
    end
 end
 

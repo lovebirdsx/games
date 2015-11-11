@@ -1,27 +1,7 @@
-if not love then
-    require('lfs')
-end
+require('lfs')
+require('log')
 
-function list_filepath_love2d(folder)
-    local result = {}
-    
-    local function list_filepath_inner(result, folder)      
-        local lfs = love.filesystem
-        local files = lfs.getDirectoryItems(folder)
-        for _, f in ipairs(files) do            
-            local path = folder .. '/' .. f         
-            if lfs.isDirectory(path) then
-                list_filepath_inner(result, path)
-            elseif lfs.isFile(path) then
-                table.insert(result, path)
-            end     
-        end
-    end
-    list_filepath_inner(result, folder)
-    return result
-end
-
-function list_filepath_lfs(folder)
+function list_filepath(folder)
     local result = {}
     local function helper(folder, result)        
         for file in lfs.dir(folder) do
@@ -34,35 +14,14 @@ function list_filepath_lfs(folder)
                 end
             end
         end    
-    end
+    end     
 
     helper(folder, result)
     return result
 end
 
-function list_filepath(folder)
-    if love then
-        return list_filepath_love2d(folder)
-    else
-        return list_filepath_lfs(folder)
-    end	
-end
-
-function list_dirs_love2d(folder)
-    local result = {}
-    local lfs = love.filesystem
-    local files = lfs.getDirectoryItems(folder)
-    for _, f in ipairs(files) do
-        local path = folder .. '/' .. f
-        if lfs.isDirectory(path) then
-            table.insert(result, path)
-        end
-    end
-    
-    return result 
-end
-
-function list_dirs_lfs(folder)
+-- return dir list in folder(include folder name)
+function list_dirs(folder)
     local result = {}
     
     for file in lfs.dir(folder) do
@@ -74,38 +33,12 @@ function list_dirs_lfs(folder)
         end
     end
 
-    return result
-end
-
--- return dir list in folder(include folder name)
-function list_dirs(folder)
-    if love then
-        return list_dirs_love2d(folder)
-    else
-        return list_dirs_lfs(folder)
-    end    
+    return result   
 end
 
 function get_dir(str,sep)
     sep = sep or'/'
     return str:match("(.*"..sep..")")
-end
-
-function copy_file(from, to)
-    if not love then error('can only use in love2d') end
-
-    local lfs = love.filesystem
-    local content = lfs.read(from)
-    if not content then
-        printf('copy failed: read file %s failed', from)
-    end
-
-    local to_dir = get_dir(to)
-    if not lfs.exists(to_dir) then
-        lfs.createDirectory(to_dir)
-    end
-
-    lfs.write(to, content)    
 end
 
 function serialize(obj)  
@@ -146,7 +79,7 @@ function unserialize(lua)
     else  
         error("can not unserialize a " .. t .. " type.")  
     end  
-    lua = "return " .. lua  
+    lua = "return " .. lua
     local func = loadstring(lua)  
     if func == nil then  
         return nil  
@@ -155,29 +88,29 @@ function unserialize(lua)
 end
 
 function write_file(filepath, str)
-    if love then
-        love.filesystem.write(filepath, str)
-    else
-    	local f, err = io.open(filepath, 'w+')
-    	if not f then
-    		printf('write_file %s failed: %s', filepath, err)
-            return
-    	end
-    	f:write(str)
-    	f:close()
-    end
+	local f, err = io.open(filepath, 'w+')
+	if not f then
+		printf('write_file %s failed: %s', filepath, err)
+        return false
+	end
+	f:write(str)
+	f:close()
+    return true
 end
 
 function read_file(filepath)
-    if love then
-        return love.filesystem.read(filepath)
-    else
-        local f, err = io.open(filepath)
-        if not f then
-            printf('read_file %s failed: %s', filepath, err)
-        end
-        return f:read('*all')
-    end	
+    local f, err = io.open(filepath)
+    if not f then
+        printf('read_file %s failed: %s', filepath, err)
+        return
+    end
+    return f:read('*all')    
+end
+
+function copy_file(from, to)
+    local content = read_file(from)
+    write_file(to, content)
+    os.remove(from)
 end
 
 function printf(fmt, ...)

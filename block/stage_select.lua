@@ -45,7 +45,7 @@ StageSelect = class(State, function (self, chapter)
 		local b = BoardButton(stage, x, y, BOARD_W, BOARD_H)
 		b.on_click = function (b)
 			if b.stage.is_unlocked then
-				StateManager:instance():change_state('StagePlay', b.stage)
+				StateManager:instance():change_state('PlayStage', b.stage)
 			else
 				text_effect.create('Stage is locked', 280, 500)
 			end

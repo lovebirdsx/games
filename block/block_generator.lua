@@ -44,12 +44,14 @@ local BLOCK_POS_MAP = {
 }
 
 local SCALE = 0.6
+local NORMAL_SCALE = 1
 
 BlockGenerator = class(function (self)
 	self.max_block_count = 3
 	self.x, self.y = 0, 0
 	self.blocks = {}
 	self.can_refill = true
+	self.scale = 1
 end)
 
 function BlockGenerator:set_max_block_count(count)
@@ -61,7 +63,7 @@ function BlockGenerator:fill_all()
 		local b = self:gen()
 		b.id = i
 		b.set_pos(self:get_block_pos(i))
-		b.set_scale(SCALE)
+		b.set_scale(self.scale * SCALE)
 		self.blocks[i] = b
 	end
 end
@@ -95,7 +97,7 @@ function BlockGenerator:apply_snapshot(s)
 		local b = self:gen(s.types[i])
 		b.id = i
 		b.set_pos(self:get_block_pos(i))
-		b.set_scale(SCALE)
+		b.set_scale(self.scale * SCALE)
 		self.blocks[i] = b
 	end
 end
@@ -142,14 +144,14 @@ function BlockGenerator:get_block_by_pos(x, y)
 end
 
 function BlockGenerator:select_block(b)
-	b.set_scale(1)
-	b.set_draw_scale(0.8)
+	b.set_scale(self.scale * NORMAL_SCALE)
+	b.set_draw_scale(self.scale * NORMAL_SCALE * 0.9)
 	self.selected_block = b
 end
 
 function BlockGenerator:reset(b)
 	b.set_pos(self:get_block_pos(b.id))
-	b.set_scale(SCALE)
+	b.set_scale(self.scale * SCALE)
 	b.set_draw_scale(1)
 end
 
@@ -201,7 +203,16 @@ function BlockGenerator:update_blocks(blocks)
 		local b0 = self:gen(b.type)
 		b0.id = i
 		b0.set_pos(self:get_block_pos(i))
-		b0.set_scale(SCALE)
+		b0.set_scale(self.scale * SCALE)
 		self.blocks[i] = b0
+	end
+end
+
+function BlockGenerator:set_scale(scale)
+	self.scale = scale
+
+	for i = 1, self.max_block_count do		
+		b = self.blocks[i]		
+		b.set_scale(self.scale * SCALE)		
 	end
 end

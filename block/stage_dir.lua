@@ -36,31 +36,16 @@ function StageButton:select(bool)
 end
 
 StageDir = class(function (self, dir)
-	buttons = Buttons()
+	self.buttons = Buttons()
 	local stage_files = list_filepath(dir)
-	table.sort(stage_files)
-
-	stages = {}
+	table.sort(stage_files)	
 	for _, path in ipairs(stage_files) do
-		local stage = Stage(path)
-		stages[#stages + 1] = stage
+		self:add(path)
 	end
 
-	-- stage buttons
-	for i, stage in ipairs(stages) do		
-		local b = StageButton(stage, 0, 0, BW, BH)
-		b.on_click = function (b)
-			self:select_button(b)
-		end
-		buttons:add(b)
-	end
-
-	self.buttons = buttons
-	self.stages = stages
 	self.visible = true
-
-	self:update_page_count()
-	self:set_page(1)
+	self.page_id = 1
+	self:update()	
 end)
 
 function StageDir:select_button(b)
@@ -72,22 +57,28 @@ function StageDir:select_button(b)
 end
 
 function StageDir:get_select_path()
-	return self.selected_button.text
+	return self.selected_button.stage.path
 end
 
-function StageDir:delete_select()
-	-- remove from dir
-	
-
+function StageDir:remove_select()
 	self.buttons:remove(self.selected_button)
 	self.selected_button = nil
-	self:update_page_count()
-	self:set_page()
+	self:update()
 end
 
-function StageDir:update_page_count()
+function StageDir:add(path)
+	local stage = Stage(path)
+	local b = StageButton(stage, 0, 0, BW, BH)
+	b.on_click = function (b)
+		self:select_button(b)
+	end
+	self.buttons:add(b)	
+end
+
+function StageDir:update()
 	self.row_count = (self.buttons:count() + COL - 1) / COL
 	self.max_page = math.floor((self.row_count + ROW - 1) / ROW)
+	self:set_page(self.page_id)
 end
 
 function StageDir:set_page(page)	
@@ -112,7 +103,9 @@ function StageDir:set_page(page)
 	end
 
 	local fb = self.buttons:get_button(((page - 1) * ROW) * COL + 1)
-	self:select_button(fb)
+	if fb then
+		self:select_button(fb)
+	end
 end
 
 function StageDir:release()
