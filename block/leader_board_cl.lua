@@ -12,7 +12,8 @@ function LeaderBoardClient:do_req(req)
 	local cl = socket.tcp()
 	cl:connect(self.addr, self.port)
 	cl:send(req_s:gsub('\n', '') .. '\n')
-	local resp_s = cl:receive('*a')
+	local resp_s = cl:receive()
+	cl:close()
 	return unserialize(resp_s)
 end
 
