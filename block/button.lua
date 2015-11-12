@@ -137,6 +137,14 @@ function Buttons:get_button(id)
    return self.buttons[id]
 end
 
+function Buttons:get_button_at_pos(x, y)
+   for i, b in ipairs(self.buttons) do
+      if b:test_point(x, y) then
+         return b
+      end
+   end
+end
+
 function Buttons:hide()
    self.visible = false
 end

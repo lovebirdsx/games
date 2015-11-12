@@ -1,16 +1,13 @@
 require('state_manager')
+require('leader_board_cl')
+require('config')
 
 ModeSelect = class(State, function (self)
 	self.buttons = Buttons()
 
-	local screen_w = love.graphics.getWidth()
-	local bw = 200
-	local bh = 100
-	local offset = 80
-	local y = 250
-	local bEndlessPlay = Button('Endless', screen_w / 2 - offset - bw, y, bw, bh)
-	local bStagePlay = Button('Puzzle',  screen_w / 2 + offset, y, bw, bh)
-	local bEditor = Button('Editor', 350, 400, bw, bh)
+	local bEndlessPlay = 	Button('Endless', 500, 150, 200, 100)
+	local bStagePlay = 		Button('Puzzle',  500, 300, 200, 100)
+	local bEditor = 		Button('Editor',  500, 450, 200, 100)
 	bEndlessPlay.font_type = 'hurge'
 	bStagePlay.font_type = 'hurge'
 	bEditor.font_type = 'hurge'
@@ -30,12 +27,32 @@ ModeSelect = class(State, function (self)
 	self.buttons:add(bEndlessPlay)
 	self.buttons:add(bStagePlay)
 	self.buttons:add(bEditor)
+
+	self.lead_board_records = self:get_leadboard_records()
 end)
+
+function ModeSelect:get_leadboard_records()
+	local cl = LeaderBoardClient(config.sv_addr, config.port)
+	return cl:get_all()
+end
 
 function ModeSelect:exit()
 	self.buttons:release()
 end
 
+function ModeSelect:draw_leadboard()
+	if not self.lead_board_records then return end
+
+	local str_t = {}
+	for i,v in ipairs(self.lead_board_records) do
+		str_t[i] = string.format('%16s%16g', v.player, v.score)
+	end
+
+	font.print('hurge', 'Leader Board', 20, 80)
+	font.print('big', table.concat(str_t, '\n'), 20, 150)
+end
+
 function ModeSelect:draw()
+	self:draw_leadboard()
 	self.buttons:draw()
 end

@@ -12,7 +12,7 @@ end)
 
 function Stage:load()
 	if not self.is_loaded then
-		info('Stage: load %s', self.path)
+		debug('Stage: load %s', self.path)
 		self.board, self.blocks, self.best_move = stage_loader.load(self.path)
 		if not self.board then
 			warning('Stage: load %s failed', self.path)

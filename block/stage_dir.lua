@@ -32,7 +32,7 @@ function StageButton:mousereleased(x, y)
       		self:on_click()
       	else
       		self:set_pos(self.ox, self.oy)
-      		self:on_move_end(x, y)
+      		self:on_drag_end(x, y)
       	end
    	end
 
@@ -40,11 +40,7 @@ function StageButton:mousereleased(x, y)
 end
 
 function StageButton:draw()
-	if self.visible then
-		if self.pressed then
-			love.graphics.setColor(255,202,136)
-			love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-		end
+	if self.visible then		
 		self.stage.board.draw()
 	end
 end
@@ -98,12 +94,11 @@ function StageDir:add(path)
 		end
 	end
 	b.on_pressed = function (b)
-		self.selected_button = b
-		print('select', b.text)
+		self.selected_button = b		
 	end
-	b.on_move_end = function (b, x, y)
-		if self.on_move_end then
-			self:on_move_end(b, x, y)
+	b.on_drag_end = function (b, x, y)		
+		if self.on_drag_end then
+			self:on_drag_end(b, x, y)
 		end
 	end
 	self.buttons:add(b)	

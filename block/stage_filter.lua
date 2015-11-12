@@ -70,6 +70,9 @@ StageFilter = class(State, function (self)
 		stages_dir.on_click = function (s, b)
 			self:play_select_stage()
 		end
+		stages_dir.on_drag_end = function (s, b, x, y)
+			self:on_drag_end(b, x, y)
+		end
 	end
 
 	self.buttons = buttons
@@ -120,6 +123,20 @@ function StageFilter:on_click(b)
 	b:select(true)
 	self.selected_button = b
 	self:select_dir_by_name(b.text)
+end
+
+function StageFilter:on_drag_end(b, x, y)
+	local b_to = self.buttons:get_button_at_pos(x, y)
+	if b_to and b_to:is_a(StageFilterButton) then
+		local from = self.selected_stages_dir:get_select_path()
+		local to = b_to.text .. '/' .. get_file_name_by_path(from)
+		info('StageFilter: move %s to %s', from, to)
+		copy_file(from, to)
+		self.selected_stages_dir:remove_select()
+		local to_stages_dir = self.stages_dirs[b_to.text]
+		to_stages_dir:add(to)
+		to_stages_dir:update()
+	end
 end
 
 function StageFilter:page_up()

@@ -5,6 +5,8 @@ require('misc')
 require('class')
 require('chapters')
 require('log')
+require('leader_board')
+require('leader_board_cl')
 
 function test_board()
 	board.init()
@@ -195,7 +197,46 @@ function test_get_file_attr()
 	end
 end
 
+function test_leader_board()
+	os.remove('lb.save')
+
+	lb = LeaderBoard('lb.save')	
+	lb:set_max_record(4)	
+	lb:add('a', 100)
+	lb:add('b', 200)
+	lb:add('c', 300)
+	lb:add('d', 400)
+	lb:add('e', 500)
+	lb:output()
+
+	lb2 = LeaderBoard('lb.save')
+	lb2:load()
+	lb2:output()
+	lb2:add('a', 1000)
+	lb2:add('b', 2000)
+
+	lb3 = LeaderBoard('lb.save')
+	lb3:output()
+end
+
+function test_leader_board_cl()
+	local cl = LeaderBoardClient('localhost', 8888)
+	cl:add('lovebird', 9999)
+	local r = cl:get_all()
+	for i,v in ipairs(r) do
+		print(i, v.player, v.score)
+	end
+end
+
+function test_leader_board_cl2()
+	cl = LeaderBoard('lb.save')	
+	cl:add('lovebird', 9999)
+	local r = cl:get_all()
+	for i,v in ipairs(r) do
+		print(i, v.player, v.score)
+	end
+end
+
 function test()
-	test_list_files()
-	test_list_dirs()
+	test_leader_board_cl()
 end

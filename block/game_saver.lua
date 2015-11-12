@@ -1,6 +1,7 @@
 require('class')
 require('log')
 require('config')
+require('misc')
 
 GameSaver = class(function (self, path, version)
 	self.path = path
@@ -19,7 +20,7 @@ function GameSaver:instance()
 end
 
 function GameSaver:load()
-	local s = love.filesystem.read(self.path)
+	local s = read_file(self.path)
 	if not s then
 		warning('GameSaver: open file %s failed', self.path)
 		return
@@ -43,7 +44,7 @@ end
 function GameSaver:save()
 	self.data.version = self.version
 	local s = serialize(self.data)
-	if not love.filesystem.write(self.path, s, #s) then
+	if not write_file(self.path, s) then
 		warning('GameSaver: save to %s failed', self.path)
 	else
 		info('GameSaver: save to %s succeed', self.path)

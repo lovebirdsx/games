@@ -9,6 +9,7 @@ require('states')
 require('game_saver')
 require('chapters')
 require('text_effect')
+require('setting')
 
 -- display live console output in sublime text2
 io.stdout:setvbuf('no')
@@ -24,6 +25,7 @@ local LUAFILE_TO_STATE = {
 	['stage_play.lua'] = 'StagePlay',
 	['run_test.lua'] = 'RunTest',
 	['test.lua'] = 'RunTest',
+	['leader_board_cl.lua'] = 'RunTest',
 }
 
 function get_start_state(lua_file)	
@@ -43,21 +45,24 @@ function love.load(args)
 	render.init()
 	font.init()
 	sound.init()
-	states.init()
 	
-	sm:change_state(get_start_state(args[2]))
 	GameSaver:instance():load()
 	Chapters:instance():load()
+	Setting:instance():load()
+
+	states.init()
+	sm:change_state(get_start_state(args[2]))
 end
 
 function love.quit()
 	sm:exit()
+	Setting:instance():save()
 	Chapters:instance():save()
 	GameSaver:instance():save()
 	return false
 end
 
-function love.update(dt)	
+function love.update(dt)
 	sm:update(dt)
 	timer_mgr.update(dt)
 	text_effect_mgr.update(dt)
@@ -80,11 +85,18 @@ function love.mousereleased(x, y, button)
 	ed:send('mousereleased', x, y, button)
 end
 
-function love.keypressed(key)
-	debug('main: [%s] pressed', key)
+local KEY_FUNS = {
+	['escape'] = love.event.quit,
+	['s'] = function () Setting:instance():troggle_sound() end,
+	['1'] = function () Setting:instance():set_log_level('debug') end,
+	['2'] = function () Setting:instance():set_log_level('info') end,
+	['3'] = function () Setting:instance():set_log_level('warning') end,
+	['4'] = function () Setting:instance():set_log_level('fatal') end,
+}
+
+function love.keypressed(key)	
 	ed:send('keypressed', key)
 
-	if key == 'escape' then
-		love.event.quit()
-	end
+	local fun = KEY_FUNS[key]
+	if fun then fun() end
 end

@@ -4,11 +4,11 @@ require('stage')
 require('misc')
 
 local CHAPTER_NAMES = {
-	['1'] = 'Simple',
+	['1'] = 'Casual',
 	['2'] = 'Easy',
-	['3'] = 'Casual',
-	['4'] = 'Normal',
-	['5'] = 'Hard',
+	['3'] = 'Normal',
+	['4'] = 'Hard',
+	['5'] = 'Harder',
 	['6'] = 'Crazy',
 	['7'] = 'Insane',
 	['8'] = 'Godlike',
