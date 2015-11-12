@@ -36,6 +36,7 @@ function StateManager:change_state(state_name, ...)
 	if self.current_state then
 		self.current_state:exit()
 	end
+	debug('StateManager: enter %s', state_name)
 	local state = self.states[state_name](...)
 	self.current_state = state	
 end

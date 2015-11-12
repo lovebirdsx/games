@@ -3,6 +3,7 @@ require('board')
 require('hexagon')
 require('misc')
 require('class')
+require('chapters')
 require('log')
 
 function test_board()
@@ -152,7 +153,7 @@ function test_path()
 end
 
 function test_list_files()
-	local files = list_filepath('stages')
+	local files = list_filepath('chapters')
 	for i,v in ipairs(files) do
 		print(i,v)
 	end
@@ -165,7 +166,6 @@ function test_list_dirs()
 	end
 end
 
-require('chapters')
 function test_chapters()
 	chapters = Chapters('chapters')	
 	for _, chapter in ipairs(chapters.chapters) do
@@ -195,5 +195,7 @@ function test_get_file_attr()
 	end
 end
 
-test_get_file_attr()
-
+function test()
+	test_list_files()
+	test_list_dirs()
+end

@@ -16,7 +16,25 @@ io.stdout:setvbuf('no')
 local ed = EventDispatcher:instance()
 local sm = StateManager:instance()
 
-function love.load()
+local LUAFILE_TO_STATE = {
+	['stage_filter.lua'] = 'StageFilter',
+	['stage_dir.lua'] = 'StageFilter',
+	['mode_select.lua'] = 'ModeSelect',	
+	['endless_play.lua'] = 'EndlessPlay',
+	['stage_play.lua'] = 'StagePlay',
+	['run_test.lua'] = 'RunTest',
+	['test.lua'] = 'RunTest',
+}
+
+function get_start_state(lua_file)	
+	local state = LUAFILE_TO_STATE[lua_file]
+	if not state then
+		state = 'ModeSelect'
+	end	
+	return state
+end
+
+function love.load(args)
 	love.window.setMode(900, 600)
 	love.window.setTitle('Hex')
 
@@ -26,9 +44,8 @@ function love.load()
 	font.init()
 	sound.init()
 	states.init()
-
-	-- sm:change_state('ModeSelect')
-	sm:change_state('StageFilter')
+	
+	sm:change_state(get_start_state(args[2]))
 	GameSaver:instance():load()
 	Chapters:instance():load()
 end

@@ -1,38 +1,36 @@
-require('lfs')
+-- require('lfs')
 require('log')
 
 function list_filepath(folder)
-    local result = {}
-    local function helper(folder, result)        
-        for file in lfs.dir(folder) do
-            local path = folder .. '/' .. file
-            if lfs.attributes(path, 'mode') == 'file' then
-                result[#result + 1] = path
-            elseif lfs.attributes(path, 'mode')== 'directory' then
-                if file ~= '.' and file ~= '..' then
-                    helper(path, result)
-                end
-            end
-        end    
-    end     
-
-    helper(folder, result)
+    local result = {}    
+    local function list_filepath_inner(result, folder)      
+        local lfs = love.filesystem
+        local files = lfs.getDirectoryItems(folder)
+        for _, f in ipairs(files) do            
+            local path = folder .. '/' .. f         
+            if lfs.isDirectory(path) then
+                list_filepath_inner(result, path)
+            elseif lfs.isFile(path) then
+                table.insert(result, path)
+            end     
+        end
+    end
+    list_filepath_inner(result, folder)
     return result
 end
 
 -- return dir list in folder(include folder name)
 function list_dirs(folder)
     local result = {}
-    
-    for file in lfs.dir(folder) do
-        local path = folder .. '/' .. file        
-        if lfs.attributes(path, 'mode')== 'directory' then
-            if file ~= '.' and file ~= '..' then
-                table.insert(result, path)
-            end
+    local lfs = love.filesystem
+    local files = lfs.getDirectoryItems(folder)
+    for _, f in ipairs(files) do
+        local path = folder .. '/' .. f
+        if lfs.isDirectory(path) then
+            table.insert(result, path)
         end
     end
-
+    
     return result   
 end
 

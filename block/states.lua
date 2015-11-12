@@ -6,6 +6,7 @@ require('play_stage')
 require('stage_select')
 require('editor')
 require('stage_filter')
+require('run_test')
 
 states = {}
 
@@ -18,4 +19,5 @@ function states.init()
 	sm:reg('PlayStage', PlayStage)
 	sm:reg('Editor', Editor)
 	sm:reg('StageFilter', StageFilter)
+	sm:reg('RunTest', RunTest)
 end

@@ -67,6 +67,9 @@ StageFilter = class(State, function (self)
 		local stages_dir = StageDir(dir)
 		stages_dir:hide()
 		stages_dirs[dir] = stages_dir
+		stages_dir.on_click = function (s, b)
+			self:play_select_stage()
+		end
 	end
 
 	self.buttons = buttons
@@ -165,14 +168,18 @@ function StageFilter:play_select_stage_end()
 	self.selected_stages_dir:show()
 end
 
+function StageFilter:play_restart()
+	if self.play then
+		self.play:restart()
+	end
+end
+
 local KEY_FUNS = {
 	['up'] 		= StageFilter.page_up,
 	['w'] 		= StageFilter.page_up,
 	['down'] 	= StageFilter.page_down,
 	['s'] 		= StageFilter.page_down,
-	['delete']	= StageFilter.delete_select_stage,
-	['return']	= StageFilter.play_select_stage,
-	[' ']	= StageFilter.play_select_stage,
+	['delete']	= StageFilter.delete_select_stage,	
 }
 
 function StageFilter:keypressed(key)
@@ -180,14 +187,15 @@ function StageFilter:keypressed(key)
 	if f then f(self) end
 end
 
+local MOUSE_PRESS_FUNS = {	
+	['wu']	= StageFilter.page_up,
+	['wd']	= StageFilter.page_down,
+	['r'] 	= StageFilter.play_restart,
+}
+
 function StageFilter:mousepressed(x, y, b)
-	if b == 'r' then
-		if self.play then
-			self.play:restart()
-		else
-			self:play_select_stage()
-		end
-	end
+	local f = MOUSE_PRESS_FUNS[b]
+	if f then f(self) end
 end
 
 function StageFilter:update(dt)

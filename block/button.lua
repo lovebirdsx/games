@@ -25,16 +25,16 @@ function Button:mousemoved(x, y)
 end
 
 function Button:mousepressed(x, y)
-   self.pressed = self.hover
+   self.pressed = self.hover      
 end
 
-function Button:mousereleased(x, y)
-   self.pressed = self.hover
-   if self.pressed then
-      debug('[%s] clicked', self.text)
-      self.pressed = false
+function Button:mousereleased(x, y)   
+   if self.pressed and self.hover then
+      debug('[%s] clicked', self.text)      
       self:on_click()      
    end
+
+   self.pressed = false
 end
 
 function Button:show()
@@ -101,20 +101,20 @@ function Buttons:mousemoved(x, y, dx, dy)
    end
 end
 
-function Buttons:mousereleased(x, y, button)
+function Buttons:mousereleased(x, y, b)
    if not self.visible then return end
 
-   if button == 'l' then
+   if b == 'l' then
       for i,button in ipairs(self.buttons) do
          button:mousereleased(x, y)
       end
    end
 end
 
-function Buttons:mousepressed(x, y, button)
+function Buttons:mousepressed(x, y, b)
    if not self.visible then return end
 
-   if button == 'l' then
+   if b == 'l' then
       for i,button in ipairs(self.buttons) do
          button:mousepressed(x, y)
       end
