@@ -1,5 +1,5 @@
 mkdir block
-..\7z\7za a -tzip block.love *.lua sound image fonts stages
+..\7z\7za a -tzip block.love *.lua sound image fonts chapters
 copy /b ..\love.exe+block.love block\block.exe
 copy ..\DevIL.dll block\DevIL.dll
 copy ..\love.dll block\love.dll

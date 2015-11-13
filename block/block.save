@@ -1,9 +1,7 @@
 {
-["Setting"]={
-["log_level"]="info",
-["sound_volume"]=1,
+["ModeSelect"]={
+["editor_visible"]=false,
 },
-["version"]="2.0.0.9",
 ["Chapters"]={
 ["Easy"]={
 ["stages"]={
@@ -301,5 +299,10 @@
 },
 ["is_unlocked"]=false,
 },
+},
+["version"]="2.0.0.9",
+["Setting"]={
+["log_level"]="info",
+["sound_volume"]=1,
 },
 }

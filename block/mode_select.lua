@@ -1,58 +1,81 @@
 require('state_manager')
 require('leader_board_cl')
+require('game_saver')
+require('event_dispatcher')
 require('config')
 
 ModeSelect = class(State, function (self)
 	self.buttons = Buttons()
 
-	local bEndlessPlay = 	Button('Endless', 500, 150, 200, 100)
-	local bStagePlay = 		Button('Puzzle',  500, 300, 200, 100)
-	local bEditor = 		Button('Editor',  500, 450, 200, 100)
-	bEndlessPlay.font_type = 'hurge'
-	bStagePlay.font_type = 'hurge'
-	bEditor.font_type = 'hurge'
+	local endless_button = 	Button('Endless', 500, 150, 200, 100)
+	local stage_button = 	Button('Puzzle',  500, 300, 200, 100)
+	local edit_button = 	Button('Editor',  800, 10, 100, 50)
+	endless_button.font_type = 'hurge'
+	stage_button.font_type = 'hurge'	
 
-	bEndlessPlay.on_click = function ()		
+	endless_button.on_click = function ()		
 		StateManager:instance():change_state('EndlessPlay')
 	end
 
-	bStagePlay.on_click = function ()
+	stage_button.on_click = function ()
 		StateManager:instance():change_state('ChapterSelect')
 	end
 
-	bEditor.on_click = function ()
+	edit_button.on_click = function ()
 		StateManager:instance():change_state('StageFilter')
 	end
 
-	self.buttons:add(bEndlessPlay)
-	self.buttons:add(bStagePlay)
-	self.buttons:add(bEditor)
+	self.buttons:add(endless_button)
+	self.buttons:add(stage_button)
+	self.buttons:add(edit_button)
+	edit_button:hide()
+	self.editor_visible = false
+	self.edit_button = edit_button
 
-	self.lead_board_records = self:get_leadboard_records()
+	self:load()
+	if self.editor_visible then
+		self.edit_button:show()
+	end
+
+	local ed = EventDispatcher:instance()
+	ed:add('keypressed', self, self.keypressed)
 end)
 
-function ModeSelect:get_leadboard_records()
-	local cl = LeaderBoardClient(config.sv_addr, config.port)
-	return cl:get_all()
+function ModeSelect:load()
+	local cfg = GameSaver:instance():get('ModeSelect')
+	if cfg then
+		self.editor_visible = cfg.editor_visible
+	end
+end
+
+function ModeSelect:save()	
+	local gs = GameSaver:instance()
+	gs:set('ModeSelect', {editor_visible = self.editor_visible})
+end
+
+function ModeSelect:keypressed(key)
+	if key == 'f4' then
+		self.editor_visible = not self.editor_visible
+		if self.editor_visible then
+			self.edit_button:show()
+		else
+			self.edit_button:hide()
+		end
+	end
+end
+
+function ModeSelect:update(dt)
+	LeaderBoardClient:instance():update(dt)
 end
 
 function ModeSelect:exit()
+	self:save()
+	local ed = EventDispatcher:instance()
+	ed:remove('keypressed', self, self.keypressed)
 	self.buttons:release()
 end
 
-function ModeSelect:draw_leadboard()
-	if not self.lead_board_records then return end
-
-	local str_t = {}
-	for i,v in ipairs(self.lead_board_records) do
-		str_t[i] = string.format('%16s%16g', v.player, v.score)
-	end
-
-	font.print('hurge', 'Leader Board', 20, 80)
-	font.print('big', table.concat(str_t, '\n'), 20, 150)
-end
-
 function ModeSelect:draw()
-	self:draw_leadboard()
 	self.buttons:draw()
+	LeaderBoardClient:instance():draw()
 end

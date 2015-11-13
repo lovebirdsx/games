@@ -1,7 +1,8 @@
 require('class')
 require('game_saver')
+require('log')
 
-local MAX_RECORD = 20
+local MAX_RECORD = 14
 
 LeaderBoard = class(function (self, path)
 	self.path = path
@@ -23,6 +24,14 @@ function LeaderBoard:load()
 		self.records = cfg.records
 		self.max_record = cfg.max_record
 		self.record_id = cfg.record_id
+
+		info('LeaderBoard: max_record = %d curr_record = %d', self.max_record, #self.records)
+	else
+		local default_record_name = {'Foo', 'Bar', 'Bala', 'Hello', 'World', 'Test',
+			'Enter', 'Exit', 'Init', 'Update', 'Draw', 'Load', 'Save', 'Print'}
+		for i, name in ipairs(default_record_name) do
+			self:add(name, i * 100)
+		end
 	end
 end
 
@@ -52,9 +61,7 @@ function LeaderBoard:add(player, score)
 		end
 	end
 
-	self.record_id = self.record_id + 1
-
-	self:save()
+	self.record_id = self.record_id + 1	
 end
 
 function LeaderBoard:get_all()

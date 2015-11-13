@@ -230,11 +230,17 @@ function Play:locate(b, rx, ry)
 			self.score = self.score + current_s
 			self:addscore_ani(current_s, rx, ry)
 			self.block_generator:refill()
+			if self.on_locate_end then
+				self:on_locate_end()
+			end
 			self:check_end()
 		end)
 	else
 		self.turn_finish = true
 		self.block_generator:refill()
+		if self.on_locate_end then
+			self:on_locate_end()
+		end
 		self:check_end()
 	end
 end

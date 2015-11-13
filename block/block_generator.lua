@@ -2,49 +2,82 @@ require('class')
 require('block')
 
 local BLOCK_CFG = {
-	{id=6, pos_list={{0, 0},}},
-	{id=1, pos_list={{-2, 0},{0, 0},{2, 0},{4, 0},}},
-	{id=1, pos_list={{2, -4},{1, -2},{0, 0},{-1, 2},}},
-	{id=1, pos_list={{-1, -2},{0, 0},{1, 2},{2, 4},}},
-	{id=5, pos_list={{1, -2},{-2, 0},{0, 0},{2, 0},}},
-	{id=5, pos_list={{-1, -2},{-2, 0},{0, 0},{2, 0},}},
-	{id=5, pos_list={{-2, 0},{0, 0},{2, 0},{-1, 2},}},
-	{id=5, pos_list={{-2, 0},{0, 0},{2, 0},{1, 2},}},
-	{id=2, pos_list={{-1, -2},{1, -2},{-2, 0},{0, 0},}},
-	{id=2, pos_list={{-1, -2},{1, -2},{0, 0},{2, 0},}},
-	{id=2, pos_list={{-1, -2},{-2, 0},{0, 0},{-1, 2},}},
-	{id=4, pos_list={{1, -2},{-2, 0},{0, 0},{-1, 2},}},
-	{id=4, pos_list={{1, -2},{0, 0},{-1, 2},{1, 2},}},
-	{id=4, pos_list={{1, -2},{0, 0},{2, 0},{-1, 2},}},
-	{id=4, pos_list={{-1, -2},{1, -2},{0, 0},{-1, 2},}},
-	{id=4, pos_list={{-1, -2},{0, 0},{-1, 2},{1, 2},}},
-	{id=4, pos_list={{-1, -2},{0, 0},{2, 0},{1, 2},}},
-	{id=4, pos_list={{-1, -2},{-2, 0},{0, 0},{1, 2},}},
-	{id=4, pos_list={{-1, -2},{1, -2},{0, 0},{1, 2},}},
-	{id=3, pos_list={{-1, -2},{-2, 0},{-1, 2},{1, 2},}},
-	{id=3, pos_list={{1, -2},{2, 0},{-1, 2},{1, 2},}},
-	{id=3, pos_list={{-1, -2},{1, -2},{-2, 0},{-1, 2},}},
-	{id=3, pos_list={{-1, -2},{1, -2},{2, 0},{1, 2},}},
-	{id=3, pos_list={{-2, 0},{2, 0},{-1, 2},{1, 2},}},
-	{id=3, pos_list={{-1, -2},{1, -2},{-2, 0},{2, 0},}},
+	{type=1, id=6, class=1, pos_list={{0, 0},}},
+	{type=2, id=1, class=1, pos_list={{-2, 0},{0, 0},{2, 0},{4, 0},}},
+	{type=3, id=1, class=1, pos_list={{2, -4},{1, -2},{0, 0},{-1, 2},}},
+	{type=4, id=1, class=1, pos_list={{-1, -2},{0, 0},{1, 2},{2, 4},}},
+	{type=37, id=5, class=1, pos_list={{0, 0},{2, 0},}},
+	{type=38, id=5, class=1, pos_list={{1, -2},{0, 0},}},
+	{type=39, id=5, class=1, pos_list={{-1, -2},{0, 0},}},
+	{type=40, id=2, class=1, pos_list={{-2, 0},{0, 0},{2, 0},}},
+	{type=41, id=5, class=1, pos_list={{1, -2},{0, 0},{-1, 2},}},
+	{type=42, id=5, class=1, pos_list={{-1, -2},{0, 0},{1, 2},}},
+	{type=43, id=2, class=1, pos_list={{-1, -2},{-2, 0},{0, 0},}},
+	{type=44, id=2, class=1, pos_list={{-1, -2},{1, -2},{-2, 0},}},
+	{type=45, id=2, class=1, pos_list={{-1, -2},{1, -2},{2, 0},}},
+	{type=46, id=2, class=1, pos_list={{1, -2},{2, 0},{1, 2},}},
+	{type=47, id=2, class=1, pos_list={{2, 0},{-1, 2},{1, 2},}},
+	{type=48, id=2, class=1, pos_list={{-2, 0},{-1, 2},{1, 2},}},
+	{type=49, id=2, class=1, pos_list={{-1, -2},{-2, 0},{-1, 2},}},
+	{type=5, id=5, class=2, pos_list={{1, -2},{-2, 0},{0, 0},{2, 0},}},
+	{type=6, id=5, class=2, pos_list={{-1, -2},{-2, 0},{0, 0},{2, 0},}},
+	{type=7, id=5, class=2, pos_list={{-2, 0},{0, 0},{2, 0},{-1, 2},}},
+	{type=8, id=5, class=2, pos_list={{-2, 0},{0, 0},{2, 0},{1, 2},}},
+	{type=9, id=2, class=2, pos_list={{-1, -2},{1, -2},{-2, 0},{0, 0},}},
+	{type=10, id=2, class=2, pos_list={{-1, -2},{1, -2},{0, 0},{2, 0},}},
+	{type=11, id=2, class=2, pos_list={{-1, -2},{-2, 0},{0, 0},{-1, 2},}},
+	{type=12, id=4, class=2, pos_list={{1, -2},{-2, 0},{0, 0},{-1, 2},}},
+	{type=13, id=4, class=2, pos_list={{1, -2},{0, 0},{-1, 2},{1, 2},}},
+	{type=14, id=4, class=2, pos_list={{1, -2},{0, 0},{2, 0},{-1, 2},}},
+	{type=15, id=4, class=2, pos_list={{-1, -2},{1, -2},{0, 0},{-1, 2},}},
+	{type=16, id=4, class=2, pos_list={{-1, -2},{0, 0},{-1, 2},{1, 2},}},
+	{type=17, id=4, class=2, pos_list={{-1, -2},{0, 0},{2, 0},{1, 2},}},
+	{type=18, id=4, class=2, pos_list={{-1, -2},{-2, 0},{0, 0},{1, 2},}},
+	{type=19, id=4, class=2, pos_list={{-1, -2},{1, -2},{0, 0},{1, 2},}},
+	{type=20, id=3, class=3, pos_list={{-1, -2},{-2, 0},{-1, 2},{1, 2},}},
+	{type=21, id=3, class=3, pos_list={{1, -2},{2, 0},{-1, 2},{1, 2},}},
+	{type=22, id=3, class=3, pos_list={{-1, -2},{1, -2},{-2, 0},{-1, 2},}},
+	{type=23, id=3, class=3, pos_list={{-1, -2},{1, -2},{2, 0},{1, 2},}},
+	{type=24, id=3, class=3, pos_list={{-2, 0},{2, 0},{-1, 2},{1, 2},}},
+	{type=25, id=3, class=3, pos_list={{-1, -2},{1, -2},{-2, 0},{2, 0},}},
+	{type=26, id=2, class=3, pos_list={{-1, -2},{1, -2},{0, 0},{-1, 2},{1, 2},}},
+	{type=27, id=6, class=4, pos_list={{1, -2},{-2, 0},{0, 0},{2, 0},{1, 2},}},
+	{type=28, id=6, class=4, pos_list={{-1, -2},{-2, 0},{0, 0},{2, 0},{-1, 2},}},
+	{type=29, id=6, class=4, pos_list={{-1, -2},{-2, 0},{0, 0},{2, 0},{1, 2},}},
+	{type=30, id=6, class=4, pos_list={{1, -2},{-2, 0},{0, 0},{2, 0},{-1, 2},}},
+	{type=31, id=3, class=4, pos_list={{1, -2},{0, 0},{2, 0},{-1, 2},{1, 2},}},
+	{type=32, id=3, class=4, pos_list={{-2, 0},{0, 0},{2, 0},{-1, 2},{1, 2},}},
+	{type=33, id=3, class=4, pos_list={{-1, -2},{-2, 0},{0, 0},{-1, 2},{1, 2},}},
+	{type=34, id=3, class=4, pos_list={{-1, -2},{1, -2},{-2, 0},{0, 0},{-1, 2},}},
+	{type=35, id=3, class=4, pos_list={{-1, -2},{1, -2},{-2, 0},{0, 0},{2, 0},}},
+	{type=36, id=3, class=4, pos_list={{-1, -2},{1, -2},{0, 0},{2, 0},{1, 2},}},
 }
 
 local BLOCK_POS_MAP = {
-	[3] = {
-		{0, 0},
-		{0, 150},
-		{0, 300},
-	},
-	[4] = {
-		{0, 0},
-		{0, 120},
-		{0, 240},
-		{0, 360},
-	}
+	[1] = {{0, 200},},
+	[2] = {{0, 80}, {0, 220}, },
+	[3] = {{0, 0},  {0, 150}, {0, 300},	},
+	[4] = {{0, 0},  {0, 120}, {0, 240}, {0, 360}, }
 }
 
 local SCALE = 0.6
 local NORMAL_SCALE = 1
+
+function gen_class_offset()
+	local r = {}
+	for i, cfg in ipairs(BLOCK_CFG) do
+		r[cfg.class] = i
+	end
+	return r
+end
+
+function get_block_cfg_by_types()
+	local r = {}
+	for i, cfg in ipairs(BLOCK_CFG) do
+		r[cfg.type] = cfg
+	end
+	return r
+end
 
 BlockGenerator = class(function (self)
 	self.max_block_count = 3
@@ -52,10 +85,18 @@ BlockGenerator = class(function (self)
 	self.blocks = {}
 	self.can_refill = true
 	self.scale = 1
+	self.class_offset = gen_class_offset()
+	self.block_cfg_by_types = get_block_cfg_by_types()
+	self.block_cfg = BLOCK_CFG
+	self.gen_end_id = self.class_offset[1]
 end)
 
 function BlockGenerator:set_max_block_count(count)
 	self.max_block_count = count
+end
+
+function BlockGenerator:set_class(class)	
+	self.gen_end_id = self.class_offset[class]	
 end
 
 function BlockGenerator:fill_all()
@@ -102,19 +143,25 @@ function BlockGenerator:apply_snapshot(s)
 	end
 end
 
-function BlockGenerator:_random_type()
+function BlockGenerator:random_type()
 	if math.random() < 0.125 then
 		return 1
 	else
-	    return math.random(2, #BLOCK_CFG)
+	    return math.random(2, self.gen_end_id)
 	end
 end
 
-function BlockGenerator:gen(type)
-	local type = type or self:_random_type()
-	local cfg = BLOCK_CFG[type]
-	local b = block.create(cfg.pos_list, cfg.id, type)
-	b.type = type
+function BlockGenerator:gen(block_type)
+	local cfg
+	if block_type then
+		cfg = self.block_cfg_by_types[block_type]
+	else
+		cfg = self.block_cfg[self:random_type()]
+	end
+
+	local b = block.create(cfg.pos_list, cfg.id)
+	b.type = cfg.type
+
 	return b
 end
 
@@ -149,15 +196,32 @@ function BlockGenerator:select_block(b)
 	self.selected_block = b
 end
 
-function BlockGenerator:reset(b)
+function BlockGenerator:reset_block(b)
 	b.set_pos(self:get_block_pos(b.id))
 	b.set_scale(self.scale * SCALE)
 	b.set_draw_scale(1)
 end
 
+function BlockGenerator:reset()
+	for i = self.max_block_count + 1, #self.blocks do
+		self.blocks[i] = nil
+	end
+
+	for i = 1, self.max_block_count do
+		local b = self.blocks[i]
+		if not b then
+			b = self:gen()
+			self.blocks[i] = b
+			b.id = i
+		end
+
+		self:reset_block(b)
+	end
+end
+
 function BlockGenerator:unselect()
 	if self.selected_block then
-		self:reset(self.selected_block)
+		self:reset_block(self.selected_block)
 		self.selected_block = nil
 	end
 end
@@ -181,12 +245,12 @@ function BlockGenerator:refill()
 
 	for i = 1, #self.blocks do
 		self.blocks[i].id = i
-		self:reset(self.blocks[i])
+		self:reset_block(self.blocks[i])
 	end
 
 	local b = self:gen()
 	b.id = self.max_block_count
-	self:reset(b)
+	self:reset_block(b)
 	self.blocks[#self.blocks + 1] = b
 end
 

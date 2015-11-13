@@ -22,10 +22,11 @@ local LUAFILE_TO_STATE = {
 	['stage_dir.lua'] = 'StageFilter',
 	['mode_select.lua'] = 'ModeSelect',	
 	['endless_play.lua'] = 'EndlessPlay',
+	['block_generator.lua'] = 'EndlessPlay',
 	['stage_play.lua'] = 'StagePlay',
 	['run_test.lua'] = 'RunTest',
 	['test.lua'] = 'RunTest',
-	['leader_board_cl.lua'] = 'RunTest',
+	['send_record.lua'] = 'SendRecord',
 }
 
 function get_start_state(lua_file)	

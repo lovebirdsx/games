@@ -79,7 +79,7 @@ function unserialize(lua)
     end  
     lua = "return " .. lua
     local func = loadstring(lua)  
-    if func == nil then  
+    if func == nil then
         return nil  
     end
     return func()  
@@ -96,13 +96,17 @@ function write_file(filepath, str)
     return true
 end
 
+-- function read_file(filepath)
+--     local f, err = io.open(filepath)
+--     if not f then
+--         printf('read_file %s failed: %s', filepath, err)
+--         return
+--     end
+--     return f:read('*all')
+-- end
+
 function read_file(filepath)
-    local f, err = io.open(filepath)
-    if not f then
-        printf('read_file %s failed: %s', filepath, err)
-        return
-    end
-    return f:read('*all')    
+    return love.filesystem.read(filepath, bytes)
 end
 
 function copy_file(from, to)

@@ -4,9 +4,9 @@ require('state_manager')
 require('chapter_select')
 require('play_stage')
 require('stage_select')
-require('editor')
 require('stage_filter')
 require('run_test')
+require('send_record')
 
 states = {}
 
@@ -16,8 +16,8 @@ function states.init()
 	sm:reg('EndlessPlay', EndlessPlay)
 	sm:reg('ChapterSelect', ChapterSelect)
 	sm:reg('StageSelect', StageSelect)
-	sm:reg('PlayStage', PlayStage)
-	sm:reg('Editor', Editor)
+	sm:reg('PlayStage', PlayStage)	
 	sm:reg('StageFilter', StageFilter)
 	sm:reg('RunTest', RunTest)
+	sm:reg('SendRecord', SendRecord)
 end

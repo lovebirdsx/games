@@ -5,6 +5,44 @@ require('event_dispatcher')
 require('game_saver')
 require('sound')
 
+local SCORE_TO_CLASS = {
+	[1] = 1000,
+	[2] = 3000,
+	[3] = 8000,
+	[4] = 15000,
+}
+
+function get_class_by_score(score)
+	local class = #SCORE_TO_CLASS
+	for c, s in ipairs(SCORE_TO_CLASS) do
+		if score < s then
+			class = c
+			break
+		end
+	end
+
+	return class
+end
+
+local SCORE_TO_BLOCK_CNT = {
+	[1] = 1000,
+	[2] = 3000,
+	[3] = 8000,
+	[4] = 15000
+}
+
+function get_block_count_by_score(score)
+	local count = #SCORE_TO_BLOCK_CNT
+	for c, s in ipairs(SCORE_TO_BLOCK_CNT) do
+		if score < s then
+			count = c
+			break
+		end
+	end
+
+	return count
+end
+
 EndlessPlay = class(State, function (self)
 	self.play = Play()
 	self.buttons = Buttons()
@@ -12,8 +50,6 @@ EndlessPlay = class(State, function (self)
 	self.is_highscore = false
 
 	local block_generator = self.play.block_generator
-	block_generator:set_max_block_count(3)
-	block_generator:fill_all()
 	block_generator:set_pos(700, 150)
 
 	local ed = EventDispatcher:instance()
@@ -46,8 +82,25 @@ EndlessPlay = class(State, function (self)
 		end		
 	end)
 
+	self.play.on_locate_end = function(play)
+		self:update_gen()
+	end
+
 	sound.play('music')
+	self:update_gen()
 end)
+
+function EndlessPlay:update_gen()
+	local bg = self.play.block_generator
+	local class = get_class_by_score(self.play.score)
+	bg:set_class(class)
+
+	local block_count = get_block_count_by_score(self.play.score)	
+	if bg.max_block_count ~= block_count then
+		bg:set_max_block_count(block_count)
+		bg:reset()
+	end
+end
 
 function EndlessPlay:load()
 	local cfg = GameSaver:instance():get('EndlessPlay')
@@ -104,13 +157,19 @@ end
 function EndlessPlay:restart()
 	self.play:reset()
 	self.is_highscore = false
+	sound.play('music')
 end
 
-function EndlessPlay:mousepressed(x, y, button)
-	if self.play:is_end() then
-		if button == 'l' then
-			self:restart()
-			sound.play('music')
+function EndlessPlay:mousepressed(x, y, button)	
+	if button == 'l' then
+		if self.play:is_end() then
+			if not self.is_highscore then
+				self:restart()			
+			else
+				local score = self.play.score
+				self.play:reset()				
+				StateManager:instance():change_state('SendRecord', score)
+			end
 		end
 	end
 end

@@ -7,6 +7,7 @@ require('chapters')
 require('log')
 require('leader_board')
 require('leader_board_cl')
+require('block_generator')
 
 function test_board()
 	board.init()
@@ -237,6 +238,12 @@ function test_leader_board_cl2()
 	end
 end
 
+function test_block_gen()
+	local bg = BlockGenerator()
+	bg:refill()	
+	print('ok')
+end
+
 function test()
-	test_leader_board_cl()
+	test_block_gen()
 end
