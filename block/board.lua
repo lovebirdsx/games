@@ -75,13 +75,13 @@ function board.create(s, x, y)
 		if n == 1 then return end
 
 		local ids = {{-1,2},{1,2},{-2,0},{2,0},{-1,-2},{1,-2}}
-		for _, id in ipairs(ids) do				
+		for _, id in ipairs(ids) do
 			local r, c = hex.rx + id[1], hex.ry + id[2]
-			
+
 			if not self._hexagons[r][c] then
 				local hx = self._x + hexagon.w / 2 * r
 				local hy = self._y + hexagon.h / 2 * c
-				self._hexagons[r][c] = hexagon.create(r, c, 0, 1, hx, hy)			
+				self._hexagons[r][c] = hexagon.create(r, c, 0, 1, hx, hy)
 			end
 
 			self._expand_init(self._hexagons[r][c], n - 1)
@@ -91,8 +91,8 @@ function board.create(s, x, y)
 	function self._expand_init_kb(h1, n)
 		if n == 0 then return end
 		local ids = {{-1,2},{1,2},{-2,0},{2,0},{-1,-2},{1,-2}}
-		for _, id in ipairs(ids) do				
-			local rx, ry = h1.rx + id[1], h1.ry + id[2]		
+		for _, id in ipairs(ids) do
+			local rx, ry = h1.rx + id[1], h1.ry + id[2]
 			if self._hexagons[rx] and self._hexagons[rx][ry] then
 				local h2 = self._hexagons[rx][ry]
 				local k, b = self._get_kb(h1, h2)
@@ -105,25 +105,25 @@ function board.create(s, x, y)
 				end
 
 				self._expand_init_kb(h2, n - 1)
-			end		
+			end
 		end
 	end
 
 	function self._init_nearby_hex()
 		if n == 0  then return end
 		local ids = {{-1,2},{1,2},{-2,0},{2,0},{-1,-2},{1,-2}}
-		
+
 		self.foreach_hex(function (h)
 			local nearby_hex = {}
 			for _, id in ipairs(ids) do
 				local rx, ry = h.rx + id[1], h.ry + id[2]
 				local h0 = self.get_hex(rx, ry)
 				if h0 then
-					table.insert(nearby_hex, h0)			
+					table.insert(nearby_hex, h0)
 				end
 			end
 			h.nearby_hex = nearby_hex
-		end)		
+		end)
 	end
 
 	-- y = kx + b
@@ -179,8 +179,8 @@ function board.create(s, x, y)
 			local hy = self._y + h2 * hex.ry
 			hex.x, hex.y, hex.scale = hx, hy, scale
 		end)
-	end	
-	
+	end
+
 	function self.gen_snapshot()
 		local snapshot = {}
 		for rid, r in pairs(self._hexagons) do
@@ -207,7 +207,7 @@ function board.create(s, x, y)
 		for _, r in pairs(self._hexagons) do
 			for _, h in pairs(r) do
 				f(h, ...)
-			end		
+			end
 		end
 	end
 
@@ -261,11 +261,11 @@ function board.create(s, x, y)
 			bh.id = 0
 		end
 
-		self._update_line_up()		
+		self._update_line_up()
 	end
 
 	function self.get_hex(rx, ry)
-		if not self._hexagons[rx] then 
+		if not self._hexagons[rx] then
 			return nil
 		else
 			return self._hexagons[rx][ry]
@@ -275,7 +275,7 @@ function board.create(s, x, y)
 
 	function self.set_hex(rx, ry, id)
 		self._hexagons[rx][ry].id = id
-	end	
+	end
 
 	function self.can_locate_any(b)
 		local result = false
@@ -318,7 +318,7 @@ function board.create(s, x, y)
 	function self.refresh()
 		self.foreach_hex(function (h)
 			h.id = 0
-		end)		
+		end)
 	end
 
 	function self.draw()
@@ -417,7 +417,7 @@ function board.create(s, x, y)
 		local depth = 0
 		local result = {}
 		local event_result = {}
-		while true do			
+		while true do
 			local depth_result = {}
 			local next_step_event = {}
 			for _, r in ipairs(event_result) do
@@ -433,7 +433,7 @@ function board.create(s, x, y)
 			local row = rows[depth]
 			if row then
 				for _, h in ipairs(row) do
-					local hex = self._hexagons[h.rx][h.ry]				
+					local hex = self._hexagons[h.rx][h.ry]
 					local id = hex.id
 					hex.on_event(self, 'lineup', next_step_event)
 					if id ~= hex.id then
@@ -449,17 +449,17 @@ function board.create(s, x, y)
 				break
 			end
 		end
-		
+
 		return result
 	end
 
-	function self.undo_lineup(result)		
+	function self.undo_lineup(result)
 		for depth = #result, 1, -1 do
 			local depth_result = result[depth]
 			for hex, id in pairs(depth_result) do
-				hex.id = id				
+				hex.id = id
 			end
-		end		
+		end
 	end
 
 	function self._resort_lineup_result(result)
@@ -544,11 +544,11 @@ function board.create(s, x, y)
 	end
 
 	function self._start_next_lineup_ani()
-		local depth = self._lineup_ani_depth + 1		
+		local depth = self._lineup_ani_depth + 1
 		if depth > self._lineup_max_depth then
 			self._is_lineup_ani_end = true
 			if self._lineup_ani_end_cb then
-				sound.play_tier(#self._lineup_rows)				
+				sound.play_tier(#self._lineup_rows)
 				self._lineup_ani_end_cb()
 			end
 			return
@@ -558,19 +558,19 @@ function board.create(s, x, y)
 		local row = self._lineup_rows[depth]
 		if row then
 			local ani = row_ani.create(row)
-			sound.play_row(depth)			
+			sound.play_row(depth)
 			table.insert(self._lineup_ani_objs, ani)
 		end
 
 		-- add other hex explotion ani
 		for hex, id in pairs(self._lineup_result[depth]) do
 			if id == hexagon.HEX_ICING then
-				table.insert(self._lineup_ani_objs, icing_ani.create(hex))					
-				hex.id = hexagon.HEX_SLOT				
+				table.insert(self._lineup_ani_objs, icing_ani.create(hex))
+				hex.id = hexagon.HEX_SLOT
 			elseif id == hexagon.HEX_BOMB then
 				local ani = bomb_ani.create(hex)
 				ani.on_bomb(function ()
-					hex.id = hexagon.HEX_SLOT					
+					hex.id = hexagon.HEX_SLOT
 				end)
 				table.insert(self._lineup_ani_objs, ani)
 			elseif hexagon.HEX_2ARROW1 <= id and id <= hexagon.HEX_2ARROW3 then
@@ -585,18 +585,18 @@ function board.create(s, x, y)
 				hex.id = id - hexagon.HEX_COLOR1_ROPE + hexagon.HEX_COLOR1
 			else
 				hex.id = hexagon.HEX_SLOT
-			end			
+			end
 		end
 
-		self._lineup_ani_depth = depth		
-	end	
+		self._lineup_ani_depth = depth
+	end
 
 	function self.is_lineup_ani_end()
 		return self._is_lineup_ani_end
 	end
 
 	-- return
-	-- rows = {hex_list1, hex_list2, ..}	
+	-- rows = {hex_list1, hex_list2, ..}
 	function self.get_lineup_rows()
 		local rows = {}
 		for k, r in pairs(self._line_up) do
@@ -606,7 +606,7 @@ function board.create(s, x, y)
 				end
 			end
 		end
-				
+
 		return rows
 	end
 
@@ -614,7 +614,7 @@ function board.create(s, x, y)
 		self.foreach_hex(function (h)
 			h.id = 0
 		end)
-	end	
+	end
 
 	function self.hex_count()
 		return self._hex_count
@@ -638,7 +638,7 @@ function board.create(s, x, y)
 		end)
 		if #empty_hexs > 0 then
 			local h = empty_hexs[math.random(1, #empty_hexs)]
-			h.id = type	
+			h.id = type
 		end
 	end
 
@@ -655,7 +655,7 @@ function board.create(s, x, y)
 		self._random_hex(id)
 	end
 
-	function self.random_rope()		
+	function self.random_rope()
 		local id = math.random(hexagon.HEX_COLOR1_ROPE, hexagon.HEX_COLOR6_ROPE)
 		self._random_hex(id)
 	end
