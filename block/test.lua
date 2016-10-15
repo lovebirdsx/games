@@ -41,8 +41,8 @@ function test_board_excel_string()
 end
 
 function test_serialize()
-	data = {["a"] = "a", ["b"] = "b", [1] = 1, [2] = 2, ["t"] = {1, 2, 3}}  
-	local sz = serialize(data)	
+	data = {["a"] = "a", ["b"] = "b", [1] = 1, [2] = 2, ["t"] = {1, 2, 3}}
+	local sz = serialize(data)
 end
 
 function test_read_write_file()
@@ -74,12 +74,12 @@ function test_board_hex_kb()
 	local b = board.create()
 	b.foreach_hex(function (h)
 		printf('%g %g:', h.rx, h.ry)
-		
+
 		for k, hexs in pairs(h.kb_hex) do
 			local strs = {}
 			for _, hex in ipairs(hexs) do
 				table.insert(strs, string.format('(%g,%g)', hex.rx, hex.ry))
-			end	
+			end
 			printf('\tk[%g] = %s', k, table.concat(strs, ' '))
 		end
 	end)
@@ -170,7 +170,7 @@ function test_list_dirs()
 end
 
 function test_chapters()
-	chapters = Chapters('chapters')	
+	chapters = Chapters('chapters')
 	for _, chapter in ipairs(chapters.chapters) do
 		print(chapter.name)
 		for _, stage in ipairs(chapter.stages) do
@@ -201,8 +201,8 @@ end
 function test_leader_board()
 	os.remove('lb.save')
 
-	lb = LeaderBoard('lb.save')	
-	lb:set_max_record(4)	
+	lb = LeaderBoard('lb.save')
+	lb:set_max_record(4)
 	lb:add('a', 100)
 	lb:add('b', 200)
 	lb:add('c', 300)
@@ -230,7 +230,7 @@ function test_leader_board_cl()
 end
 
 function test_leader_board_cl2()
-	cl = LeaderBoard('lb.save')	
+	cl = LeaderBoard('lb.save')
 	cl:add('lovebird', 9999)
 	local r = cl:get_all()
 	for i,v in ipairs(r) do
@@ -240,10 +240,12 @@ end
 
 function test_block_gen()
 	local bg = BlockGenerator()
-	bg:refill()	
+	bg:refill()
 	print('ok')
 end
 
 function test()
 	test_block_gen()
 end
+
+print(('hello %d'):format(1))
