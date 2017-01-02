@@ -1,3 +1,5 @@
+require('log')
+
 sound = {}
 
 local SOUND_CFG = {
@@ -44,8 +46,16 @@ function sound.init()
 end
 
 function sound.play_tier(id)
+	id = id - 1
+	if id <= 0 then return end	
 	if id > 7 then id = 7 end
+
 	_sounds['voice_tier' .. id]:play()
+end
+
+function sound.play_row(depth)
+	if depth > 10 then depth = 10 end
+	_sounds['row' .. depth]:play()
 end
 
 function sound.play(type)
@@ -53,7 +63,7 @@ function sound.play(type)
 	if s then 
 		s:play()
 	else
-		print('play sound failed:' .. type)
+		warning('play sound %s failed:', type)
 	end
 end
 
