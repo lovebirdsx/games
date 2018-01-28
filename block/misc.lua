@@ -1,4 +1,4 @@
--- require('lfs')
+--require('lfs')
 require('log')
 
 function list_filepath(folder)
@@ -96,18 +96,18 @@ function write_file(filepath, str)
     return true
 end
 
-function read_file(filepath)
-    local f, err = io.open(filepath)
-    if not f then
-        printf('read_file %s failed: %s', filepath, err)
-        return
-    end
-    return f:read('*all')
-end
+--function read_file(filepath)
+--    local f, err = io.open(filepath)
+--    if not f then
+--        printf('read_file %s failed: %s, curr_dir = %s', filepath, err, love.filesystem.getWorkingDirectory())
+--        return
+--    end
+--    return f:read('*all')
+--end
 
--- function read_file(filepath)
---     return love.filesystem.read(filepath, bytes)
--- end
+ function read_file(filepath)
+     return love.filesystem.read(filepath)
+ end
 
 function copy_file(from, to)
     local content = read_file(from)
